@@ -1,0 +1,1 @@
+ALTER TABLE "arrangers_pb_data" ADD COLUMN "social_links" jsonb;

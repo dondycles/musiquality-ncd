@@ -1,0 +1,1 @@
+ALTER TABLE "arrangers_pb_data" DROP COLUMN IF EXISTS "website";

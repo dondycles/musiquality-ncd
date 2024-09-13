@@ -1,0 +1,1 @@
+ALTER TABLE "arrangers_pb_data" ALTER COLUMN "social_links" SET DEFAULT '[]'::jsonb;
