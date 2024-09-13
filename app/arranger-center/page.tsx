@@ -55,14 +55,14 @@ export default async function ArrangerCenterPage() {
               return (
                 <Link
                   key={sl.type}
-                  href={`${sl.base_url}${sl.slug}`}
+                  href={`${sl.base_url}${sl.value}`}
                   className="flex items-center gap-1 hover:underline"
                   target="_blank"
                 >
-                  <div className="text-lg text-inherit">
+                  <div className="text-lg">
                     {SOCIAL_MEDIAS.find((sm) => sm.type === sl.type)?.icon}
                   </div>
-                  <p>{sl.slug}</p>
+                  <p>{sl.value}</p>
                 </Link>
               );
             })}

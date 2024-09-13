@@ -29,6 +29,13 @@ import SheetViewer from "./sheet.view";
 import { useToast } from "@/hooks/use-toast";
 import { uploadSheet } from "@/app/actions";
 import { useUser } from "@clerk/nextjs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 const formSchema = z.object({
   title: z
     .string()
@@ -66,18 +73,14 @@ const formSchema = z.object({
     .min(1, {
       message: "At least one instrument",
     }),
+  difficulty: z.enum(["Beginner", "Intermediate", "Advanced"]),
   genres: z
     .array(
       z.object({
-        value: z.string().min(1, {
-          message: "Genre name must be at least 1 character.",
-        }),
+        value: z.string(),
       })
     )
-    .min(1, {
-      message: "At least one genre",
-    }),
-  difficulty: z.string(z.enum(["easy", "medium", "hard"])),
+    .optional(),
 });
 
 export default function ArrangerUploadSheetForm() {
@@ -95,6 +98,17 @@ export default function ArrangerUploadSheetForm() {
       ],
       thumbnail_url: "",
       sheets_file_url: "",
+      instruments_used: [
+        {
+          value: "",
+        },
+      ],
+      difficulty: "Beginner",
+      genres: [
+        {
+          value: "",
+        },
+      ],
     },
   });
 
@@ -107,6 +121,24 @@ export default function ArrangerUploadSheetForm() {
     name: "og_artists",
   });
 
+  const {
+    fields: instruments_used,
+    append: appendInstrumentUsed,
+    remove: removeInstrumentUsed,
+  } = useFieldArray({
+    control: form.control,
+    name: "instruments_used",
+  });
+
+  const {
+    fields: genres,
+    append: appendGenre,
+    remove: removeGenre,
+  } = useFieldArray({
+    control: form.control,
+    name: "genres",
+  });
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if (uploadingPdf)
       return toast({
@@ -114,7 +146,6 @@ export default function ArrangerUploadSheetForm() {
         description: "Please wait while we upload your PDF.",
         variant: "destructive",
       });
-
     if (!user)
       return toast({
         title: "Error",
@@ -127,6 +158,11 @@ export default function ArrangerUploadSheetForm() {
         og_artists: data.og_artists.map((artist) => artist.value),
         thumbnail_url: data.thumbnail_url,
         arranger_id: user.id,
+        difficulty: data.difficulty,
+        genres: data.genres?.map((genre) => genre.value),
+        instruments_used: data.instruments_used.map(
+          (instrument) => instrument.value
+        ),
       },
       data.sheets_file_url
     );
@@ -207,6 +243,7 @@ export default function ArrangerUploadSheetForm() {
               </FormItem>
             )}
           />
+
           <div className="flex flex-col gap-4 flex-1 ">
             <FormField
               name="title"
@@ -236,15 +273,6 @@ export default function ArrangerUploadSheetForm() {
                           placeholder={`Artist ${index + 1}`}
                           {...field}
                         />
-                        {index > 0 && (
-                          <Button
-                            type="button"
-                            onClick={() => removeOgArtist(index)}
-                            size="icon"
-                          >
-                            <Minus size={16} />
-                          </Button>
-                        )}
                         {index === og_artists.length - 1 && (
                           <Button
                             type="button"
@@ -252,6 +280,15 @@ export default function ArrangerUploadSheetForm() {
                             size="icon"
                           >
                             <Plus size={16} />
+                          </Button>
+                        )}
+                        {og_artists.length > 1 && (
+                          <Button
+                            type="button"
+                            onClick={() => removeOgArtist(index)}
+                            size="icon"
+                          >
+                            <Minus size={16} />
                           </Button>
                         )}
                       </div>
@@ -266,6 +303,127 @@ export default function ArrangerUploadSheetForm() {
                 )}
               />
             ))}
+
+            {instruments_used.map((field, index) => (
+              <FormField
+                key={field.id}
+                name={`instruments_used.${index}.value`}
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    {index === 0 && <FormLabel>Instruments Used</FormLabel>}
+                    <FormControl>
+                      <div className="flex flex-row gap-2">
+                        <Input
+                          className="flex-1"
+                          placeholder={`Instrument ${index + 1}`}
+                          {...field}
+                        />
+                        {index === instruments_used.length - 1 && (
+                          <Button
+                            type="button"
+                            onClick={() => appendInstrumentUsed({ value: "" })}
+                            size="icon"
+                          >
+                            <Plus size={16} />
+                          </Button>
+                        )}
+                        {instruments_used.length > 1 && (
+                          <Button
+                            type="button"
+                            onClick={() => removeInstrumentUsed(index)}
+                            size="icon"
+                          >
+                            <Minus size={16} />
+                          </Button>
+                        )}
+                      </div>
+                    </FormControl>
+                    {index === instruments_used.length - 1 && (
+                      <FormDescription>
+                        Enter the instruments used in the song
+                      </FormDescription>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+
+            {genres.map((field, index) => (
+              <FormField
+                key={field.id}
+                name={`genres.${index}.value`}
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    {index === 0 && <FormLabel>Genres</FormLabel>}
+                    <FormControl>
+                      <div className="flex flex-row gap-2">
+                        <Input
+                          className="flex-1"
+                          placeholder={`Genre ${index + 1}`}
+                          {...field}
+                        />
+                        {index === genres.length - 1 && (
+                          <Button
+                            type="button"
+                            onClick={() => appendGenre({ value: "" })}
+                            size="icon"
+                          >
+                            <Plus size={16} />
+                          </Button>
+                        )}
+                        {genres.length > 1 && (
+                          <Button
+                            type="button"
+                            onClick={() => removeGenre(index)}
+                            size="icon"
+                          >
+                            <Minus size={16} />
+                          </Button>
+                        )}
+                      </div>
+                    </FormControl>
+                    {index === genres.length - 1 && (
+                      <FormDescription>
+                        Enter the genres of the song
+                      </FormDescription>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+
+            <FormField
+              name="difficulty"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Difficulty</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a difficulty" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Intermediate">
+                          Intermediate
+                        </SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <Button type="submit" className="mt-auto mb-0">
               Submit
             </Button>

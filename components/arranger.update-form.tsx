@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -45,7 +46,8 @@ import {
 } from "@/lib/constants";
 import { ToastAction } from "./ui/toast";
 import { Separator } from "./ui/separator";
-const formSchema = z.object({
+
+export const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
@@ -75,7 +77,7 @@ const formSchema = z.object({
   social_links: z
     .array(
       z.object({
-        slug: z.string(),
+        value: z.string(),
         type: SOCIAL_MEDIA_TYPES,
         base_url: SOCIAL_MEDIA_BASE_URLS,
       })
@@ -97,9 +99,6 @@ export default function ArrangerUpdateForm({
     name: false,
     bio: false,
     slug: false,
-    instruments: false,
-    genres: false,
-    social_links: false,
   });
 
   const default_instruments =
@@ -122,38 +121,11 @@ export default function ArrangerUpdateForm({
       instruments: default_instruments,
       genres: default_genres,
       social_links: arranger_data.social_links?.map((link) => ({
-        slug: link.slug,
+        value: link.value,
         type: link.type,
         base_url: link.base_url,
       })),
     },
-  });
-
-  const {
-    fields: instruments,
-    append: appendInstrument,
-    remove: removeInstrument,
-  } = useFieldArray({
-    control: form.control,
-    name: "instruments",
-  });
-
-  const {
-    fields: genres,
-    append: appendGenre,
-    remove: removeGenre,
-  } = useFieldArray({
-    control: form.control,
-    name: "genres",
-  });
-
-  const {
-    fields: social_links,
-    append: appendSocialLink,
-    remove: removeSocialLink,
-  } = useFieldArray({
-    control: form.control,
-    name: "social_links",
   });
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
@@ -168,6 +140,11 @@ export default function ArrangerUpdateForm({
       social_links: values.social_links,
     });
     if (res.error) {
+      if (res.field) {
+        form.setError(res.field as keyof (typeof formSchema)["shape"], {
+          message: res.error,
+        });
+      }
       return toast({
         description: res.error,
         variant: "destructive",
@@ -184,37 +161,9 @@ export default function ArrangerUpdateForm({
     const detectChanges = (field: keyof typeof changes) => {
       const formValue = form.watch(field);
       const arrangerValue = arranger_data[field];
-      if (field === "social_links") {
-        console.log(
-          `${field} : form=${JSON.stringify(
-            formValue
-          )} | arranger=${JSON.stringify(arrangerValue ?? [])}`
-        );
-        return (
-          JSON.stringify(formValue) !== JSON.stringify(arrangerValue ?? [])
-        );
-      }
-      if (Array.isArray(formValue) && Array.isArray(arrangerValue)) {
-        console.log(
-          `${field} : form=${
-            JSON.stringify(formValue.map((ins) => ins)) ===
-            JSON.stringify([null])
-              ? JSON.stringify([])
-              : JSON.stringify(formValue.map((ins) => ins))
-          } | arranger=${JSON.stringify(arrangerValue)}`
-        );
 
-        return (
-          (JSON.stringify(formValue.map((ins) => ins)) ===
-          JSON.stringify([null])
-            ? JSON.stringify([])
-            : JSON.stringify(formValue.map((ins) => ins))) !==
-          JSON.stringify(arrangerValue)
-        );
-      } else {
-        console.log(`${field} : form=${formValue} | arranger=${arrangerValue}`);
-        return formValue !== arrangerValue;
-      }
+      return formValue !== arrangerValue;
+      // }
     };
 
     setChanges({
@@ -222,9 +171,6 @@ export default function ArrangerUpdateForm({
       name: detectChanges("name"),
       bio: detectChanges("bio"),
       slug: detectChanges("slug"),
-      instruments: detectChanges("instruments"),
-      genres: detectChanges("genres"),
-      social_links: detectChanges("social_links"),
     });
   }, [
     arranger_data,
@@ -266,6 +212,7 @@ export default function ArrangerUpdateForm({
           }
         }
         setOpen(state);
+        form.reset();
       }}
     >
       <DialogTrigger asChild>
@@ -343,7 +290,6 @@ export default function ArrangerUpdateForm({
                   <FormControl>
                     <Textarea
                       placeholder="Tell us a little bit about yourself"
-                      className="resize-none"
                       {...field}
                     />
                   </FormControl>
@@ -375,238 +321,17 @@ export default function ArrangerUpdateForm({
             <Separator />
 
             <p className="text-sm">Instruments</p>
-            {instruments.length > 0 ? (
-              instruments.map((f, index) => (
-                <FormField
-                  control={form.control}
-                  key={f.id}
-                  name={`instruments.${index}.value`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex flex-row gap-2">
-                          <Input
-                            className="flex-1"
-                            placeholder={`Instrument ${index + 1}`}
-                            {...field}
-                          />
-                          {index === instruments.length - 1 && (
-                            <Button
-                              type="button"
-                              onClick={() => appendInstrument({ value: "" })}
-                              size="icon"
-                            >
-                              <Plus size={16} />
-                            </Button>
-                          )}
-                          <Button
-                            type="button"
-                            onClick={() => removeInstrument(index)}
-                            size="icon"
-                          >
-                            <Minus size={16} />
-                          </Button>
-                        </div>
-                      </FormControl>
-                      {index === instruments.length - 1 && (
-                        <FormDescription>
-                          Enter the instruments you work with
-                        </FormDescription>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ))
-            ) : (
-              <>
-                <p className="text-muted-foreground text-xs">
-                  No instruments found, add some to get started.
-                </p>
-                <Button
-                  type="button"
-                  onClick={() => appendInstrument({ value: "" })}
-                >
-                  Add Instrument
-                </Button>
-              </>
-            )}
+            <FormFieldArray form={form} name="instruments" />
 
             <Separator />
 
             <p className="text-sm">Genres</p>
-            {genres.length > 0 ? (
-              genres.map((f, index) => (
-                <FormField
-                  control={form.control}
-                  key={f.id}
-                  name={`genres.${index}.value`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex flex-row gap-2">
-                          <Input
-                            className="flex-1"
-                            placeholder={`Genre ${index + 1}`}
-                            {...field}
-                          />
-                          {index === genres.length - 1 && (
-                            <Button
-                              type="button"
-                              onClick={() => appendGenre({ value: "" })}
-                              size="icon"
-                            >
-                              <Plus size={16} />
-                            </Button>
-                          )}
-                          <Button
-                            type="button"
-                            onClick={() => removeGenre(index)}
-                            size="icon"
-                          >
-                            <Minus size={16} />
-                          </Button>
-                        </div>
-                      </FormControl>
-                      {index === genres.length - 1 && (
-                        <FormDescription>
-                          Enter the genres you work with, separated by commas.
-                        </FormDescription>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ))
-            ) : (
-              <>
-                <p className="text-muted-foreground text-xs">
-                  No genres found, add some to get started.
-                </p>
-                <Button
-                  type="button"
-                  onClick={() => appendGenre({ value: "" })}
-                >
-                  Add Genre
-                </Button>
-              </>
-            )}
+            <FormFieldArray form={form} name="genres" />
 
             <Separator />
 
             <p className="text-sm">Social Links</p>
-            {social_links.length > 0 ? (
-              social_links.map((f, index) => (
-                <FormField
-                  control={form.control}
-                  key={f.id}
-                  name={`social_links.${index}.slug`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex flex-col gap-2 ">
-                          <div className="flex flex-row gap-1">
-                            {
-                              SOCIAL_MEDIAS.find((sm) => sm.type === f.type)
-                                ?.icon
-                            }
-                            <p className="text-muted-foreground text-xs">
-                              {f.base_url}
-                            </p>
-                          </div>
-                          <div className="flex flex-row gap-2">
-                            <Input
-                              className="flex-1"
-                              placeholder={`Social Link ${index + 1}`}
-                              {...field}
-                            />
-                            {index === social_links.length - 1 && (
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button type="button" size="icon">
-                                    <Plus size={16} />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                  {SOCIAL_MEDIAS.map((sm) => {
-                                    return (
-                                      <DropdownMenuItem
-                                        key={sm.url}
-                                        onClick={() =>
-                                          appendSocialLink({
-                                            base_url: sm.url,
-                                            type: sm.type,
-                                            slug: "",
-                                          })
-                                        }
-                                      >
-                                        <div className="flex flex-row gap-2 items-center">
-                                          {sm.icon}
-                                          <p className="text-muted-foreground text-xs">
-                                            {sm.name}
-                                          </p>
-                                        </div>
-                                      </DropdownMenuItem>
-                                    );
-                                  })}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            )}
-                            <Button
-                              type="button"
-                              onClick={() => removeSocialLink(index)}
-                              size="icon"
-                            >
-                              <Minus size={16} />
-                            </Button>
-                          </div>
-                        </div>
-                      </FormControl>
-                      {index === social_links.length - 1 && (
-                        <FormDescription>
-                          Enter your social links, separated by commas.
-                        </FormDescription>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ))
-            ) : (
-              <>
-                <p className="text-muted-foreground text-xs">
-                  No social links found, add some to get started.
-                </p>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button type="button">Add social link</Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {SOCIAL_MEDIAS.map((sm) => {
-                      return (
-                        <DropdownMenuItem
-                          key={sm.url}
-                          onClick={() =>
-                            appendSocialLink({
-                              slug: "",
-                              base_url: sm.url,
-                              type: sm.type,
-                            })
-                          }
-                        >
-                          <div className="flex flex-row gap-2 items-center">
-                            {sm.icon}
-                            <p className="text-muted-foreground text-xs">
-                              {sm.name}
-                            </p>
-                          </div>
-                        </DropdownMenuItem>
-                      );
-                    })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
-            )}
+            <FormFieldArray form={form} name="social_links" isSocialLinks />
 
             <div className="flex flex-row gap-4 justify-end">
               <Button
@@ -622,5 +347,174 @@ export default function ArrangerUpdateForm({
         </Form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function AddSocialLinkButton({
+  appendSocialLink,
+  children,
+}: {
+  appendSocialLink: ({
+    base_url,
+    type,
+    value,
+  }: {
+    base_url: (typeof SOCIAL_MEDIAS)[number]["url"];
+    type: (typeof SOCIAL_MEDIAS)[number]["type"];
+    value: string;
+  }) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
+      <DropdownMenuContent>
+        {SOCIAL_MEDIAS.map((sm) => {
+          return (
+            <DropdownMenuItem
+              key={sm.url}
+              onClick={() =>
+                appendSocialLink({
+                  base_url: sm.url,
+                  type: sm.type,
+                  value: "",
+                })
+              }
+            >
+              <div className="flex flex-row gap-2 items-center">
+                {sm.icon}
+                <p className="text-muted-foreground text-xs">{sm.name}</p>
+              </div>
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function FormFieldArray({
+  form,
+  name,
+  isSocialLinks,
+}: {
+  form: UseFormReturn<z.infer<typeof formSchema>>;
+  name: keyof Pick<
+    z.infer<typeof formSchema>,
+    "instruments" | "genres" | "social_links"
+  >;
+  isSocialLinks?: boolean;
+}) {
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: name,
+  });
+
+  return (
+    <>
+      {fields.length > 0 ? (
+        fields.map((f, index) => (
+          <FormField
+            control={form.control}
+            key={f.id}
+            name={`${name}.${index}.value`}
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <div className="flex flex-row gap-2 placeholder:capitalize">
+                    {isSocialLinks ? (
+                      <div className="flex flex-col gap-2 flex-1">
+                        <div className="flex flex-row gap-1">
+                          {
+                            SOCIAL_MEDIAS.find(
+                              (sm) =>
+                                sm.type ===
+                                (
+                                  f as unknown as {
+                                    type: (typeof SOCIAL_MEDIAS)[number]["type"];
+                                  }
+                                ).type
+                            )?.icon
+                          }
+                          <p className="text-muted-foreground text-xs">
+                            {
+                              (
+                                f as unknown as {
+                                  base_url: (typeof SOCIAL_MEDIAS)[number]["url"];
+                                }
+                              ).base_url
+                            }
+                          </p>
+                        </div>
+                        <div className="flex flex-row gap-2">
+                          <Input
+                            className="flex-1"
+                            placeholder={`Social Link ${index + 1}`}
+                            {...field}
+                          />
+                          {index === fields.length - 1 && (
+                            <AddSocialLinkButton appendSocialLink={append}>
+                              <Button type="button" size="icon">
+                                <Plus size={16} />
+                              </Button>
+                            </AddSocialLinkButton>
+                          )}
+                          <Button
+                            type="button"
+                            onClick={() => remove(index)}
+                            size="icon"
+                          >
+                            <Minus size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <Input
+                          className="flex-1"
+                          placeholder={`${name.replace("_", " ")} ${index + 1}`}
+                          {...field}
+                        />
+                        {index === fields.length - 1 && (
+                          <Button
+                            type="button"
+                            onClick={() => append({ value: "" })}
+                            size="icon"
+                          >
+                            <Plus size={16} />
+                          </Button>
+                        )}
+                        <Button
+                          type="button"
+                          onClick={() => remove(index)}
+                          size="icon"
+                        >
+                          <Minus size={16} />
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </FormControl>
+                {index === fields.length - 1 && (
+                  <FormDescription>
+                    Enter the {name.replace("_", " ")} you work with
+                  </FormDescription>
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ))
+      ) : (
+        <>
+          <p className="text-muted-foreground text-xs">
+            No {name.replace("_", " ")} found, add some
+          </p>
+          <Button type="button" onClick={() => append({ value: "" })}>
+            Add Instrument
+          </Button>
+        </>
+      )}
+    </>
   );
 }

@@ -1,0 +1,2 @@
+ALTER TABLE "arrangers_pb_data" ALTER COLUMN "created_at" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "sheets" ADD COLUMN "created_at" timestamp with time zone DEFAULT now() NOT NULL;

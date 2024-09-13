@@ -4,6 +4,7 @@ import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { ArrangersPublicData, Sheets, SheetsFileURL } from "./db/schema";
 import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export async function applyAsArranger() {
   const user = await currentUser();
@@ -69,6 +70,21 @@ export async function uploadSheet(
 export async function updateArranger(
   arranger: typeof ArrangersPublicData.$inferInsert
 ) {
+  const user = await currentUser();
+  if (!user) return { error: "No user!" };
+
+  if (!user.publicMetadata.is_arranger) {
+    return { error: "You are not an arranger!" };
+  }
+
+  if (user.publicMetadata.slug !== arranger.slug) {
+    const res = await db.query.ArrangersPublicData.findFirst({
+      where: eq(ArrangersPublicData.slug, arranger.slug),
+    });
+
+    if (res) return { error: "Slug already exists!", field: "slug" };
+  }
+
   const arrangerRes = await db
     .update(ArrangersPublicData)
     .set({
