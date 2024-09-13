@@ -321,17 +321,25 @@ export default function ArrangerUpdateForm({
             <Separator />
 
             <p className="text-sm">Instruments</p>
-            <FormFieldArray form={form} name="instruments" />
+            <FormFieldArray
+              form={form}
+              name="instruments"
+              isSocialLinks={false}
+            />
 
             <Separator />
 
             <p className="text-sm">Genres</p>
-            <FormFieldArray form={form} name="genres" />
+            <FormFieldArray form={form} name="genres" isSocialLinks={false} />
 
             <Separator />
 
             <p className="text-sm">Social Links</p>
-            <FormFieldArray form={form} name="social_links" isSocialLinks />
+            <FormFieldArray
+              form={form}
+              name="social_links"
+              isSocialLinks={true}
+            />
 
             <div className="flex flex-row gap-4 justify-end">
               <Button
@@ -396,14 +404,14 @@ function AddSocialLinkButton({
 function FormFieldArray({
   form,
   name,
-  isSocialLinks,
+  isSocialLinks = false,
 }: {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   name: keyof Pick<
     z.infer<typeof formSchema>,
     "instruments" | "genres" | "social_links"
   >;
-  isSocialLinks?: boolean;
+  isSocialLinks: boolean;
 }) {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -422,7 +430,7 @@ function FormFieldArray({
               <FormItem>
                 <FormControl>
                   <div className="flex flex-row gap-2 placeholder:capitalize">
-                    {isSocialLinks ? (
+                    {isSocialLinks === true ? (
                       <div className="flex flex-col gap-2 flex-1">
                         <div className="flex flex-row gap-1">
                           {
@@ -510,9 +518,15 @@ function FormFieldArray({
           <p className="text-muted-foreground text-xs">
             No {name.replace("_", " ")} found, add some
           </p>
-          <Button type="button" onClick={() => append({ value: "" })}>
-            Add Instrument
-          </Button>
+          {isSocialLinks === true ? (
+            <AddSocialLinkButton appendSocialLink={append}>
+              <Button type="button">Add Social Link</Button>
+            </AddSocialLinkButton>
+          ) : (
+            <Button type="button" onClick={() => append({ value: "" })}>
+              Add Instrument
+            </Button>
+          )}
         </>
       )}
     </>
