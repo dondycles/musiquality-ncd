@@ -8,8 +8,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import ArrangerAvatar from "@/components/arranger.avatar";
 
-import ArrangerUpdateForm from "@/components/arranger.update-form";
-import ArrangerUploadSheetForm from "@/components/arranger.upload-sheet-form";
+import ArrangerUpdateForm from "./update-form";
+import ArrangerUploadSheetForm from "./upload-sheet-form";
 import { SOCIAL_MEDIAS } from "@/lib/constants";
 
 export default async function ArrangerCenterPage() {
