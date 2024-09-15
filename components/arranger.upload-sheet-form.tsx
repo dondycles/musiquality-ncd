@@ -22,10 +22,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 import { Minus, Plus } from "lucide-react";
-import SheetThumbnail from "./sheet.thumnail";
+import SheetThumbnail from "./sheets/sheet-thumbnail";
 import { UploadButton } from "@/utils/uploadthing";
 import { useState } from "react";
-import SheetViewer from "./sheet.view";
+import SheetViewer from "./sheets/sheet-viewer";
 import { useToast } from "@/hooks/use-toast";
 import { uploadSheet } from "@/app/actions";
 import { useUser } from "@clerk/nextjs";
@@ -188,12 +188,12 @@ export default function ArrangerUploadSheetForm() {
             control={form.control}
             name="sheets_file_url"
             render={({ field }) => (
-              <FormItem className="self-stretch flex items-center justify-center flex-col">
+              <FormItem className="self-stretch flex  flex-col ">
                 <>
                   {field.value ? (
                     <Dialog>
-                      <DialogTrigger className="flex-1 h-full">
-                        <div className="flex flex-col gap-4 flex-1  h-full">
+                      <DialogTrigger className="mx-auto">
+                        <div className="flex flex-col gap-4 flex-1">
                           <SheetThumbnail
                             className="border rounded-md overflow-hidden flex-1"
                             _setThumbnailUrl={(url) => {

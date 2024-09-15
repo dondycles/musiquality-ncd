@@ -1,6 +1,6 @@
 import { UserButton } from "@clerk/nextjs";
 import { UserResource } from "@clerk/types";
-import { Music } from "lucide-react";
+import { BookUser, Music } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function UserBtn({ user }: { user: UserResource }) {
@@ -27,6 +27,12 @@ export default function UserBtn({ user }: { user: UserResource }) {
             onClick={() => router.push("/apply-as-arranger")}
           />
         )}
+
+        <UserButton.Action
+          label="Library"
+          labelIcon={<BookUser size={16} />}
+          onClick={() => router.push("/library")}
+        />
       </UserButton.MenuItems>
     </UserButton>
   );

@@ -1,5 +1,13 @@
 import { SOCIAL_MEDIA_BASE_URLS, SOCIAL_MEDIA_TYPES } from "@/lib/constants";
-import { integer, jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  real,
+  serial,
+} from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 export const ArrangersPublicData = pgTable("arrangers_pb_data", {
@@ -48,6 +56,7 @@ export const Sheets = pgTable("sheets", {
   genres: text("genres")
     .array()
     .$defaultFn(() => []),
+  price: real("price").notNull().default(5),
 });
 
 export const SheetsFileURL = pgTable("sheets_file_url", {
@@ -55,4 +64,35 @@ export const SheetsFileURL = pgTable("sheets_file_url", {
   sheet_id: integer("sheet_id").references(() => Sheets.id, {
     onDelete: "cascade",
   }),
+});
+
+export const Transactions = pgTable("transactions", {
+  id: serial("id").primaryKey(),
+  payment_intent_id: text("payment_intent_id").notNull(),
+  metadata: jsonb("metadata").notNull(),
+  price: real("price").notNull(),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  status: text("status")
+    .$type<"pending" | "succeeded" | "failed">()
+    .notNull()
+    .$defaultFn(() => "pending"),
+  user_id: text("user_id"),
+});
+
+export const Library = pgTable("library", {
+  id: serial("id").primaryKey(),
+  sheet: integer("sheet").references(() => Sheets.id, {
+    onDelete: "cascade",
+  }),
+  payment_intent: text("payment_intent")
+    .notNull()
+    .references(() => Transactions.payment_intent_id, {
+      onDelete: "cascade",
+    }),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  user_id: text("user_id"),
 });

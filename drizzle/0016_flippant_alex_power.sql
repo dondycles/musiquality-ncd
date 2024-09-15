@@ -1,0 +1,1 @@
+ALTER TABLE "sheets" ADD COLUMN "price" real DEFAULT 5 NOT NULL;

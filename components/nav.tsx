@@ -4,6 +4,7 @@ import UserBtn from "./user-btn";
 import { SignInButton, useClerk } from "@clerk/nextjs";
 import { ThemeToggleBtn } from "./theme-toggle-btn";
 import { Button } from "./ui/button";
+import CartDrawer from "./cart.drawer";
 export default function Nav() {
   const { user } = useClerk();
 
@@ -15,6 +16,7 @@ export default function Nav() {
         </Link>
         <div className="flex gap-2 items-center">
           <ThemeToggleBtn />
+          <CartDrawer />
           {!user ? (
             <SignInButton>
               <Button>Sign in</Button>

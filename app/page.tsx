@@ -3,7 +3,16 @@ import { Suspense } from "react";
 import { ArrangersPublicData, Sheets } from "./db/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
-import SheetThumbnail from "@/components/sheet.thumnail";
+// import SheetsDisplayer from "@/components/sheets.displayer";
+import { Flame } from "lucide-react";
+import {
+  SheetsDisplayer,
+  SheetsDisplayerHeader,
+  SheetsDisplayerTitle,
+  SheetsDisplayerIcon,
+  SheetsDisplayerContent,
+  SheetsDisplayerViewToggleBtn,
+} from "@/components/sheets/sheets-displayer";
 
 export default async function Home() {
   const sheets = await db
@@ -20,39 +29,22 @@ export default async function Home() {
       <Suspense>
         <SearchBar />
       </Suspense>
-      <div className="grid grid-cols-1 xs:grid-cols-2 gap-4 mx-auto text-center max-w-[500px]">
-        {sheets.map((sheet) => (
-          <div
-            key={sheet.sheets.id}
-            className="border rounded-md flex flex-col overflow-hidden"
-          >
-            <SheetThumbnail
-              className="w-full"
-              existingThumbnailUrl={sheet.sheets.thumbnail_url}
-            />
-            <div className="p-4 text-left mb-0 mt-auto">
-              <p className="font-semibold text-xl truncate">
-                {sheet.sheets.title}
-              </p>
-              <div className="text-muted-foreground text-xs">
-                <p className="truncate">
-                  Arranged by {sheet.arrangers_pb_data.name}
-                </p>
-                <p className="truncate">
-                  Genres: {sheet.sheets.genres?.join(", ") ?? "None"}
-                </p>
-                <p className="truncate">
-                  Difficulty: {sheet.sheets.difficulty}
-                </p>
-                <p className="truncate">
-                  Instruments:{" "}
-                  {sheet.sheets.instruments_used?.join(", ") ?? "None"}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* <SheetsDisplayer
+        sheets={sheets}
+        actionType="top-selling"
+        title="Top Selling Sheets"
+        icon={<Flame size={24} className="m-auto" />}
+      /> */}
+      <SheetsDisplayer>
+        <SheetsDisplayerHeader>
+          <SheetsDisplayerIcon>
+            <Flame size={24} />
+          </SheetsDisplayerIcon>
+          <SheetsDisplayerTitle>Top Selling Sheets</SheetsDisplayerTitle>
+          <SheetsDisplayerViewToggleBtn actionType="top-selling" />
+        </SheetsDisplayerHeader>
+        <SheetsDisplayerContent actionType="top-selling" sheets={sheets} />
+      </SheetsDisplayer>
     </div>
   );
 }

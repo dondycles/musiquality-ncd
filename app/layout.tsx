@@ -9,6 +9,8 @@ import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
 import { Toaster } from "@/components/ui/toaster";
+import QueryProvider from "@/components/query-provider";
+import { UserDataProvider } from "@/components/user-data-provider";
 
 const cormorant = localFont({
   src: [
@@ -57,16 +59,19 @@ export default function RootLayout({
           className={`${cormorant.variable} ${poppins.variable} font-poppins antialiased flex flex-col min-h-screen`}
         >
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
             disableTransitionOnChange
           >
-            <Nav />
-            {children}
-            <Footer />
-            <Toaster />
+            <QueryProvider>
+              <UserDataProvider>
+                <Nav />
+                {children}
+                <Footer />
+                <Toaster />
+              </UserDataProvider>
+            </QueryProvider>
           </ThemeProvider>
         </body>
       </html>

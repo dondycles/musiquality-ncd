@@ -33,14 +33,14 @@ export default function SheetThumbnail({
     setThumbnailUrl(existingThumbnailUrl);
   }, [existingThumbnailUrl]);
 
-  if (thumbnailUrl || existingThumbnailUrl)
-    return (
-      <div
-        className={cn(
-          "max-w-64 w-screen aspect-[561/795] bg-white relative",
-          className
-        )}
-      >
+  return (
+    <div
+      className={cn(
+        "max-w-64 w-screen aspect-[561/795] bg-white relative flex items-center justify-center",
+        className
+      )}
+    >
+      {thumbnailUrl || existingThumbnailUrl ? (
         <Image
           className="object-contain object-top w-full h-full"
           fill
@@ -49,7 +49,9 @@ export default function SheetThumbnail({
           quality={100}
           sizes="(max-width: 768px) 256px, (max-width: 1200px) 512px, 720px"
         />
-      </div>
-    );
-  return <Loader className="animate-spin my-8 m-auto" />;
+      ) : (
+        <Loader className="animate-spin m-auto" />
+      )}
+    </div>
+  );
 }
