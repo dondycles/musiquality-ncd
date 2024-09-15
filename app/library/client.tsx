@@ -38,17 +38,29 @@ export default function LibraryClientPage() {
                 />
               </SheetsDisplayer>
               <p className="text-muted-foreground">Transactions</p>
-              {userData.map((data) => (
-                <div
-                  key={data.transactions.id}
-                  className="flex flex-col gap-4 rounded-md bg-muted p-4"
-                >
-                  <p className="text-xs text-muted-foreground">
-                    {data.transactions.payment_intent_id}
-                  </p>
-                  <p>{JSON.stringify(data.transactions.metadata)}</p>
-                </div>
-              ))}
+
+              {Array.from(
+                new Set(
+                  userData.map((data) => data.transactions.payment_intent_id)
+                )
+              ).map((paymentIntentId) => {
+                const transaction = userData.find(
+                  (data) =>
+                    data.transactions.payment_intent_id === paymentIntentId
+                )?.transactions;
+                if (!transaction) return null;
+                return (
+                  <div
+                    key={transaction.id}
+                    className="flex flex-col gap-4 rounded-md bg-muted p-4"
+                  >
+                    <p className="text-xs text-muted-foreground">
+                      {transaction.payment_intent_id}
+                    </p>
+                    <p>{JSON.stringify(transaction.metadata)}</p>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             "No transactions"

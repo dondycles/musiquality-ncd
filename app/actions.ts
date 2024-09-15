@@ -8,8 +8,8 @@ import {
   Sheets,
   SheetsFileURL,
   Transactions,
-} from "./db/schema";
-import { db } from "./db";
+} from "../utils/db/schema";
+import { db } from "../utils/db";
 import { eq } from "drizzle-orm";
 import Stripe from "stripe";
 

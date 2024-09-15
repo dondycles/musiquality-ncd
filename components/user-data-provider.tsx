@@ -2,14 +2,14 @@
 import { createContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
-import { db } from "@/app/db";
+import { db } from "@/utils/db";
 import {
   ArrangersPublicData,
   Library,
   Sheets,
   SheetsFileURL,
   Transactions,
-} from "@/app/db/schema";
+} from "@/utils/db/schema";
 import { eq } from "drizzle-orm";
 import { getUserTransactions } from "@/app/actions";
 type InitialState = {

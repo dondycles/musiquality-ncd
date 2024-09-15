@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrangersPublicData } from "@/app/db/schema";
+import { ArrangersPublicData } from "@/utils/db/schema";
 import { cn } from "@/lib/utils";
 import { ClassNameValue } from "tailwind-merge";
 export default function ArrangerAvatar({

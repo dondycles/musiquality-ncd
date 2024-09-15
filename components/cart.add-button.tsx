@@ -1,6 +1,6 @@
 "use client";
 
-import { PublicSheetData } from "@/app/db/types";
+import { PublicSheetData } from "@/utils/db/types";
 import { useCartStore } from "@/store";
 import { Button } from "./ui/button";
 import { ShoppingCart, X } from "lucide-react";

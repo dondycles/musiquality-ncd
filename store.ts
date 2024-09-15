@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import { get, set, del } from "idb-keyval";
-import { PublicSheetData } from "./app/db/types";
+import { PublicSheetData } from "./utils/db/types";
 const storage: StateStorage = {
   getItem: async (name: string): Promise<string | null> => {
     // console.log(name, "has been retrieved");

@@ -9,7 +9,7 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 import ListViewer from "../list-viewer";
-import { PrivateSheetData, PublicSheetData } from "@/app/db/types";
+import { PrivateSheetData, PublicSheetData } from "@/utils/db/types";
 
 import PageViewToggleBtn from "../page-view-toggle-btn";
 
@@ -99,35 +99,36 @@ const SheetsDisplayerContent = React.forwardRef<
     opts={{
       align: "start",
       slidesToScroll: 1,
-      dragFree: true,
     }}
     {...props}
   >
-    <CarouselContent>
-      <SheetsDisplayerOrientor
-        actionType={actionType}
-        row={chunkArray(sheets, 10).map((sheetChunk, index) => (
-          <CarouselItem key={`chunked-${index}`} className="basis-full">
-            <ListViewer length={sheetChunk.length}>
-              {sheetChunk.map((s) => (
-                <SheetBar sheet={s} key={s.sheets.id} />
-              ))}
-            </ListViewer>
-          </CarouselItem>
-        ))}
-        col={sheets.map((sheet) => (
-          <CarouselItem
-            key={sheet.sheets.id}
-            className="max-w-fit w-fit min-w-fit"
-          >
-            <SheetCard sheet={sheet} />
-          </CarouselItem>
-        ))}
-      />
-    </CarouselContent>
-    <div className="flex gap-4 items-center justify-center mt-3">
-      <CarouselPrevious />
-      <CarouselNext />
+    <div className="flex flex-col">
+      <CarouselContent>
+        <SheetsDisplayerOrientor
+          actionType={actionType}
+          row={chunkArray(sheets, 10).map((sheetChunk, index) => (
+            <CarouselItem key={`chunked-${index}`} className="basis-full">
+              <ListViewer length={sheetChunk.length}>
+                {sheetChunk.map((s) => (
+                  <SheetBar sheet={s} key={s.sheets.id} />
+                ))}
+              </ListViewer>
+            </CarouselItem>
+          ))}
+          col={sheets.map((sheet) => (
+            <CarouselItem
+              key={sheet.sheets.id}
+              className="max-w-fit w-fit min-w-fit"
+            >
+              <SheetCard sheet={sheet} />
+            </CarouselItem>
+          ))}
+        />
+      </CarouselContent>
+      <div className="flex gap-4 items-center justify-center mt-3">
+        <CarouselPrevious />
+        <CarouselNext />
+      </div>
     </div>
   </Carousel>
 ));

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ArrangerAvatar from "../arranger.avatar";
 import CartAddButton from "../cart.add-button";
-import { PrivateSheetData, PublicSheetData } from "@/app/db/types";
+import { PrivateSheetData, PublicSheetData } from "@/utils/db/types";
 import { Button } from "../ui/button";
 import { ClassNameValue } from "tailwind-merge";
 import { cn } from "@/lib/utils";

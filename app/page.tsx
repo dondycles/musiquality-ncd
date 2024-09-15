@@ -1,7 +1,7 @@
 import SearchBar from "@/components/search-bar";
 import { Suspense } from "react";
-import { ArrangersPublicData, Sheets } from "./db/schema";
-import { db } from "./db";
+import { ArrangersPublicData, Sheets } from "../utils/db/schema";
+import { db } from "../utils/db";
 import { eq } from "drizzle-orm";
 // import SheetsDisplayer from "@/components/sheets.displayer";
 import { Flame } from "lucide-react";

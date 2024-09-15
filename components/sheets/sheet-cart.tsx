@@ -1,4 +1,4 @@
-import { PrivateSheetData, PublicSheetData } from "@/app/db/types";
+import { PrivateSheetData, PublicSheetData } from "@/utils/db/types";
 import { cn } from "@/lib/utils";
 import SheetThumbnail from "./sheet-thumbnail";
 import Link from "next/link";

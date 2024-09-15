@@ -8,7 +8,7 @@ import { Button } from "./ui/button";
 import { useState } from "react";
 import Link from "next/link";
 import CurrencyText from "./currency-text";
-import { Sheets } from "@/app/db/schema";
+import { Sheets } from "@/utils/db/schema";
 import { useUser } from "@clerk/nextjs";
 import {
   createPaymentIntent,

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrangersPublicData } from "@/app/db/schema";
+import { ArrangersPublicData } from "@/utils/db/schema";
 import { Minus, Plus } from "lucide-react";
 import ArrangerAvatar from "../../components/arranger.avatar";
 import { UploadButton } from "@/utils/uploadthing";

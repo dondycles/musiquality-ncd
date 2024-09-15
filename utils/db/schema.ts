@@ -86,13 +86,24 @@ export const Library = pgTable("library", {
   sheet: integer("sheet").references(() => Sheets.id, {
     onDelete: "cascade",
   }),
-  payment_intent: text("payment_intent")
-    .notNull()
-    .references(() => Transactions.payment_intent_id, {
-      onDelete: "cascade",
-    }),
+  payment_intent: text("payment_intent").notNull(),
   created_at: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
   user_id: text("user_id"),
+});
+
+export const Sales = pgTable("sales", {
+  id: serial("id").primaryKey(),
+  sheet: integer("sheet").references(() => Sheets.id, {
+    onDelete: "no action",
+  }),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  payment_intent: text("payment_intent"),
+  buyer_id: text("buyer_id"),
+  arranger_id: text("arranger_id").references(() => ArrangersPublicData.id, {
+    onDelete: "no action",
+  }),
 });

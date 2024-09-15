@@ -1,9 +1,9 @@
 import { RedirectToSignIn } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { db } from "../db";
+import { db } from "../../utils/db";
 import { eq } from "drizzle-orm";
-import { ArrangersPublicData } from "../db/schema";
+import { ArrangersPublicData } from "../../utils/db/schema";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import ArrangerAvatar from "@/components/arranger.avatar";

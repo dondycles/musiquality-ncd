@@ -1,6 +1,6 @@
 import SearchBar from "@/components/search-bar";
-import { db } from "../db";
-import { ArrangersPublicData, Sheets } from "../db/schema";
+import { db } from "../../utils/db";
+import { ArrangersPublicData, Sheets } from "../../utils/db/schema";
 import { eq, ilike, or, sql } from "drizzle-orm";
 import { Suspense } from "react";
 
