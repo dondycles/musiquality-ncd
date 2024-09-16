@@ -1,6 +1,6 @@
 "use client";
 
-import { PublicSheetData } from "@/utils/db/types";
+import { SheetData } from "@/utils/db/types";
 import { useCartStore } from "@/store";
 import { Button } from "./ui/button";
 import { Pencil, ShoppingCart, X } from "lucide-react";
@@ -17,7 +17,7 @@ export default function CartAddButton({
   textClassName,
   branded,
 }: {
-  sheet: PublicSheetData;
+  sheet: SheetData;
   containerClassName?: ClassNameValue;
   textClassName?: ClassNameValue;
   branded?: boolean;

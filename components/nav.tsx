@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import UserBtn from "./user-btn";
-import { SignInButton, useClerk } from "@clerk/nextjs";
+import { SignInButton } from "@clerk/nextjs";
 import { ThemeToggleBtn } from "./theme-toggle-btn";
 import { Button } from "./ui/button";
 import CartDrawer from "./cart.drawer";

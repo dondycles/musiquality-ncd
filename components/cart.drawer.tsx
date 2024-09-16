@@ -24,7 +24,7 @@ import PaymentForm from "./payment-form";
 import { UserDataContext } from "./user-data-provider";
 const stripe = getStripe();
 export default function CartDrawer() {
-  const { userData } = useContext(UserDataContext);
+  const { transactions } = useContext(UserDataContext);
   const cart = useCartStore();
 
   // This code filters the cart items to exclude sheets that the user already owns
@@ -33,11 +33,11 @@ export default function CartDrawer() {
     const hasValidId = item.sheets.id;
 
     // Check if the user doesn't already own this sheet
-    const isNotOwned = !userData?.some(
+    const isNotOwned = !transactions?.some(
       (data) => data.sheets.id === item.sheets.id
     );
 
-    const notTheArranger = !userData?.some(
+    const notTheArranger = !transactions?.some(
       (data) => data.arrangers_pb_data.id === item.arrangers_pb_data.id
     );
 

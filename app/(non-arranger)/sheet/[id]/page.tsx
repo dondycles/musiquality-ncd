@@ -69,7 +69,14 @@ export default async function SheetPage({
                   Genres: {sheet[0].sheets.genres?.join(", ") ?? "None"}
                 </p>
               </div>
-              <CartAddButton containerClassName="w-fit" sheet={sheet[0]} />
+              <CartAddButton
+                containerClassName="w-fit"
+                sheet={{
+                  sheets: sheet[0].sheets,
+                  sheets_file_url: null,
+                  arrangers_pb_data: sheet[0].arrangers_pb_data,
+                }}
+              />
             </div>
           </div>
         </div>
