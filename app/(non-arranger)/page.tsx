@@ -36,7 +36,13 @@ export default async function Home() {
           <SheetsDisplayerTitle>Top Selling Sheets</SheetsDisplayerTitle>
           <SheetsDisplayerViewToggleBtn actionType="top-selling" />
         </SheetsDisplayerHeader>
-        <SheetsDisplayerContent actionType="top-selling" sheets={sheets} />
+        <SheetsDisplayerContent
+          actionType="top-selling"
+          sheets={sheets.map((s) => ({
+            ...s,
+            sheets_file_url: null,
+          }))}
+        />
       </SheetsDisplayer>
     </div>
   );

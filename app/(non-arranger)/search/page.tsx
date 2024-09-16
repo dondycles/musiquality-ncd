@@ -57,6 +57,7 @@ export default async function SearchPage({
           sheets={sheets.map((data) => ({
             arrangers_pb_data: data.arrangers_pb_data,
             sheets: data.sheets,
+            sheets_file_url: null,
           }))}
         />
       </SheetsDisplayer>

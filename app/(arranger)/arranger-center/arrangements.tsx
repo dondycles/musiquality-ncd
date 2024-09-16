@@ -33,6 +33,7 @@ export default function ArrangerCenterArrangements() {
             arrangers_pb_data: {
               ...arrangerData.arrangerData!,
             },
+            sheets_file_url: null,
           })) || []
         }
       />

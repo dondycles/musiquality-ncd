@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ArrangerAvatar from "../arranger.avatar";
 import CartAddButton from "../cart.add-button";
-import { PrivateSheetData, PublicSheetData } from "@/utils/db/types";
+import { SheetData } from "@/utils/db/types";
 import { Button } from "../ui/button";
 import { ClassNameValue } from "tailwind-merge";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,7 @@ export default function SheetBar({
   sheet,
 }: {
   className?: ClassNameValue;
-  sheet: PublicSheetData | PrivateSheetData;
+  sheet: SheetData;
 }) {
   return (
     <div
@@ -29,7 +29,7 @@ export default function SheetBar({
           {sheet.sheets.og_artists.join(", ")}
         </p>
       </div>
-      {!(sheet as PrivateSheetData).sheets_file_url ? (
+      {!sheet.sheets_file_url ? (
         <CartAddButton
           branded={false}
           containerClassName="w-fit my-auto ml-auto mr-0"
@@ -38,10 +38,7 @@ export default function SheetBar({
           sheet={sheet}
         />
       ) : (
-        <Link
-          className="ml-auto mr-0"
-          href={(sheet as PrivateSheetData).sheets_file_url.url}
-        >
+        <Link className="ml-auto mr-0" href={sheet.sheets_file_url.url}>
           <Button>Download</Button>
         </Link>
       )}

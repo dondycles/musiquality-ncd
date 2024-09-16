@@ -15,7 +15,7 @@ export default function ArrangerAvatar({
   return (
     <Link
       href={`/arranger/${arranger_data.slug}`}
-      className={cn("", className)}
+      className={cn("shrink-0", className)}
     >
       <Image
         placeholder="blur"
@@ -24,7 +24,7 @@ export default function ArrangerAvatar({
         }
         src={arranger_data.avatar_url ?? "/favicon.ico"}
         alt={arranger_data.name}
-        className="rounded-full aspect-square object-contain"
+        className="rounded-full aspect-square object-contain shrink-0"
         width={size}
         height={size}
         priority

@@ -9,7 +9,7 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 import ListViewer from "../list-viewer";
-import { PrivateSheetData, PublicSheetData } from "@/utils/db/types";
+import { SheetData } from "@/utils/db/types";
 import PageViewToggleBtn from "../page-view-toggle-btn";
 import SheetsDisplayerOrientor from "../orientor";
 import SheetCard from "./sheet-cart";
@@ -84,7 +84,7 @@ SheetsDisplayerViewToggleBtn.displayName = "SheetsDisplayerViewToggleBtn";
 interface SheetsDisplayerContentProps
   extends React.HTMLAttributes<HTMLDivElement> {
   actionType: "search" | "library" | "top-selling";
-  sheets: PublicSheetData[] | PrivateSheetData[];
+  sheets: SheetData[];
 }
 
 const SheetsDisplayerContent = React.forwardRef<

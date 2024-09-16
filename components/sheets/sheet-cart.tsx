@@ -1,4 +1,4 @@
-import { PrivateSheetData, PublicSheetData } from "@/utils/db/types";
+import { SheetData } from "@/utils/db/types";
 import { cn } from "@/lib/utils";
 import SheetThumbnail from "./sheet-thumbnail";
 import Link from "next/link";
@@ -11,7 +11,7 @@ export default function SheetCard({
   sheet,
 }: {
   className?: string;
-  sheet: PublicSheetData | PrivateSheetData;
+  sheet: SheetData;
 }) {
   return (
     <div
@@ -31,8 +31,11 @@ export default function SheetCard({
         <div className="text-xs space-y-2">
           <div className="flex items-center gap-1">
             <ArrangerAvatar size={24} arranger_data={sheet.arrangers_pb_data} />
-            <Link href={`/arranger/${sheet.arrangers_pb_data.slug}`}>
-              <p className="truncate">{sheet.arrangers_pb_data.name}</p>
+            <Link
+              className="truncate"
+              href={`/arranger/${sheet.arrangers_pb_data.slug}`}
+            >
+              {sheet.arrangers_pb_data.name}
             </Link>
           </div>
           <div className="text-muted-foreground">
@@ -47,13 +50,10 @@ export default function SheetCard({
               Genres: {sheet.sheets.genres?.join(", ") ?? "None"}
             </p>
           </div>
-          {!(sheet as PrivateSheetData).sheets_file_url ? (
+          {!sheet.sheets_file_url ? (
             <CartAddButton sheet={sheet} />
           ) : (
-            <Link
-              className="w-full"
-              href={(sheet as PrivateSheetData).sheets_file_url.url}
-            >
+            <Link className="w-full" href={sheet.sheets_file_url.url}>
               <Button className="w-full mt-2">Download</Button>
             </Link>
           )}
