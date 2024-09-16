@@ -1,3 +1,4 @@
+"use client";
 import {
   LinkAuthenticationElement,
   PaymentElement,
@@ -12,20 +13,23 @@ import { Sheets } from "@/utils/db/schema";
 import { useUser } from "@clerk/nextjs";
 import {
   createPaymentIntent,
+  saveSale,
   saveSheetToLibrary,
   updateTransaction,
 } from "@/app/actions";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCartStore } from "@/store";
 
 export default function PaymentForm({
   total,
   sheets,
-  onSuccess,
 }: {
   total: number;
-  sheets: Pick<typeof Sheets.$inferSelect, "id" | "price">[];
-  onSuccess: () => void;
+  sheets: Pick<typeof Sheets.$inferSelect, "id" | "price" | "arranger_id">[];
 }) {
   const { user } = useUser();
+  const cart = useCartStore();
+  const queryClient = useQueryClient();
   const stripe = useStripe();
   const elements = useElements();
   const [isPaying, setIsPaying] = useState(false);
@@ -64,10 +68,13 @@ export default function PaymentForm({
     for (const sheet of sheets) {
       await (async () => {
         await saveSheetToLibrary(sheet.id, intent.id);
+        await saveSale(sheet, intent.id);
       })();
     }
     setIsPaying(false);
-    onSuccess();
+    queryClient.invalidateQueries({ queryKey: ["user-data", user.id] });
+    cart.setState("success");
+    cart.resetCart();
   };
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 flex-1">

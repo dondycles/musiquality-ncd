@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import {
   ArrangersPublicData,
   Library,
+  Sales,
   Sheets,
   SheetsFileURL,
   Transactions,
@@ -187,9 +188,7 @@ export async function updateTransaction(
   return { success: res };
 }
 
-export async function getUserTransactions() {
-  const user = await currentUser();
-  if (!user) return { error: "No user!" };
+export async function getUserTransactions(userId: string) {
   const res = await db
     .select()
     .from(Transactions)
@@ -203,7 +202,75 @@ export async function getUserTransactions() {
       eq(Sheets.arranger_id, ArrangersPublicData.id)
     )
     .innerJoin(SheetsFileURL, eq(Sheets.id, SheetsFileURL.sheet_id))
-    .where(eq(Transactions.user_id, user!.id));
+    .where(eq(Transactions.user_id, userId));
   if (!res[0]) return { error: "No transaction data returned!" };
   return { success: res };
+}
+
+export async function getSales(userId: string) {
+  const res = await db
+    .select()
+    .from(Sales)
+    .innerJoin(Sheets, eq(Sales.sheet, Sheets.id))
+    .innerJoin(
+      ArrangersPublicData,
+      eq(Sheets.arranger_id, ArrangersPublicData.id)
+    )
+    .where(eq(Sales.arranger_id, userId));
+  if (!res[0]) return { error: "No sales data returned!" };
+  return { success: res };
+}
+export async function getArrangements(userId: string) {
+  const res = await db
+    .select()
+    .from(Sheets)
+    .where(eq(Sheets.arranger_id, userId));
+  if (!res[0]) return { error: "No arrangements data returned!" };
+  return { success: res };
+}
+
+export async function getArrangerData(userId: string) {
+  const res = await db.query.ArrangersPublicData.findFirst({
+    where: eq(ArrangersPublicData.id, userId),
+  });
+  if (!res) return { error: "No arranger data returned!" };
+  return { success: res };
+}
+
+export async function getUserWholeData() {
+  const user = await currentUser();
+  if (!user) return { error: "No user!" };
+
+  const transactions = await getUserTransactions(user.id);
+  const sales = await getSales(user.id);
+  const arrangements = await getArrangements(user.id);
+  const arrangerData = await getArrangerData(user.id);
+
+  return {
+    success: {
+      transactions,
+      sales,
+      arrangements,
+      arrangerData,
+    },
+  };
+}
+
+export async function saveSale(
+  sheet: Pick<typeof Sheets.$inferSelect, "id" | "price" | "arranger_id">,
+  payment_intent: string
+) {
+  const user = await currentUser();
+  if (!user) return { error: "No user!" };
+  const res = await db
+    .insert(Sales)
+    .values({
+      arranger_id: sheet.arranger_id,
+      buyer_id: user.id,
+      payment_intent,
+      sheet: sheet.id,
+    })
+    .returning();
+  if (!res[0]) return { error: "No sale data returned!" };
+  return { success: "Sale created!" };
 }

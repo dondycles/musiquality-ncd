@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
-import Footer from "@/components/footer";
 import Nav from "@/components/nav";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
@@ -68,7 +67,6 @@ export default function RootLayout({
               <UserDataProvider>
                 <Nav />
                 {children}
-                <Footer />
                 <Toaster />
               </UserDataProvider>
             </QueryProvider>

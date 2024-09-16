@@ -2,18 +2,18 @@
 import { createContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
-import { db } from "@/utils/db";
 import {
   ArrangersPublicData,
   Library,
+  Sales,
   Sheets,
   SheetsFileURL,
   Transactions,
 } from "@/utils/db/schema";
-import { eq } from "drizzle-orm";
-import { getUserTransactions } from "@/app/actions";
-type InitialState = {
-  userData:
+import { getUserWholeData } from "@/app/actions";
+import { UserResource } from "@clerk/types";
+export type InitialState = {
+  transactions:
     | {
         sheets: typeof Sheets.$inferSelect;
         arrangers_pb_data: typeof ArrangersPublicData.$inferSelect;
@@ -23,9 +23,26 @@ type InitialState = {
       }[]
     | null;
   isLoading: boolean;
+  resource: UserResource | null;
+  arrangerData: {
+    sales:
+      | {
+          sheets: typeof Sheets.$inferSelect;
+          arrangers_pb_data: typeof ArrangersPublicData.$inferSelect;
+          sales: typeof Sales.$inferSelect;
+        }[]
+      | null;
+    arrangements: (typeof Sheets.$inferSelect)[] | null;
+    arrangerData: typeof ArrangersPublicData.$inferSelect | null;
+  } | null;
 };
 
-const initialState: InitialState = { userData: null, isLoading: true };
+const initialState: InitialState = {
+  transactions: null,
+  isLoading: true,
+  resource: null,
+  arrangerData: null,
+};
 export const UserDataContext = createContext<InitialState>(initialState);
 
 export function UserDataProvider({ children }: { children: React.ReactNode }) {
@@ -34,14 +51,23 @@ export function UserDataProvider({ children }: { children: React.ReactNode }) {
   const { data, isLoading } = useQuery({
     enabled: (user !== undefined || user !== null) && isLoaded && isSignedIn,
     queryKey: ["user-data", user?.id],
-    queryFn: async () => await getUserTransactions(),
+    queryFn: async () => await getUserWholeData(),
   });
 
   return (
     <UserDataContext.Provider
       value={{
-        isLoading,
-        userData: data?.success === undefined ? null : data.success,
+        isLoading: isLoading || !isLoaded,
+        transactions: data?.success?.transactions.success ?? null,
+        resource: user === undefined || user === null ? null : user,
+        arrangerData:
+          data?.success === undefined
+            ? null
+            : {
+                sales: data.success.sales.success ?? null,
+                arrangements: data.success.arrangements.success ?? null,
+                arrangerData: data.success.arrangerData.success ?? null,
+              },
       }}
     >
       {children}

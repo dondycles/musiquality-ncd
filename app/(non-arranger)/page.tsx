@@ -1,10 +1,10 @@
 import SearchBar from "@/components/search-bar";
 import { Suspense } from "react";
-import { ArrangersPublicData, Sheets } from "../utils/db/schema";
-import { db } from "../utils/db";
+import { ArrangersPublicData, Sheets } from "../../utils/db/schema";
+import { db } from "../../utils/db";
 import { eq } from "drizzle-orm";
-// import SheetsDisplayer from "@/components/sheets.displayer";
 import { Flame } from "lucide-react";
+
 import {
   SheetsDisplayer,
   SheetsDisplayerHeader,
@@ -21,20 +21,13 @@ export default async function Home() {
     .innerJoin(
       ArrangersPublicData,
       eq(Sheets.arranger_id, ArrangersPublicData.id)
-    )
-    .limit(10);
+    );
 
   return (
     <div className="flex flex-col gap-4 mt-[70px] flex-1 py-4 x-padding ">
       <Suspense>
-        <SearchBar />
+        <SearchBar baseUrl="/search" />
       </Suspense>
-      {/* <SheetsDisplayer
-        sheets={sheets}
-        actionType="top-selling"
-        title="Top Selling Sheets"
-        icon={<Flame size={24} className="m-auto" />}
-      /> */}
       <SheetsDisplayer>
         <SheetsDisplayerHeader>
           <SheetsDisplayerIcon>

@@ -26,7 +26,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/arranger-center/.upload-sheet-form.tsx"
+    "app/(arranger)/arranger-center/.upload-sheet-form.tsx"
   ],
   "exclude": ["node_modules"]
 }

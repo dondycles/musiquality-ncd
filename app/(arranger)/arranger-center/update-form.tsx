@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrangersPublicData } from "@/utils/db/schema";
 import { Minus, Plus } from "lucide-react";
-import ArrangerAvatar from "../../components/arranger.avatar";
+import ArrangerAvatar from "../../../components/arranger.avatar";
 import { UploadButton } from "@/utils/uploadthing";
 import { updateArranger } from "@/app/actions";
 import {
@@ -44,8 +44,8 @@ import {
   SOCIAL_MEDIA_TYPES,
   SOCIAL_MEDIAS,
 } from "@/lib/constants";
-import { ToastAction } from "../../components/ui/toast";
-import { Separator } from "../../components/ui/separator";
+import { ToastAction } from "../../../components/ui/toast";
+import { Separator } from "../../../components/ui/separator";
 
 export const formSchema = z.object({
   name: z.string().min(2, {

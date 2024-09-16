@@ -13,7 +13,7 @@ import { useCartStore } from "@/store";
 import { CheckCircle, CreditCard, ShoppingCart, X } from "lucide-react";
 import { Elements } from "@stripe/react-stripe-js";
 import getStripe from "@/utils/stripe";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
 import Link from "next/link";
 import { Progress } from "./ui/progress";
@@ -21,17 +21,36 @@ import { motion } from "framer-motion";
 import SheetThumbnail from "./sheets/sheet-thumbnail";
 import CurrencyText from "./currency-text";
 import PaymentForm from "./payment-form";
+import { UserDataContext } from "./user-data-provider";
 const stripe = getStripe();
 export default function CartDrawer() {
+  const { userData } = useContext(UserDataContext);
   const cart = useCartStore();
-  const total = cart.cart.reduce((acc, item) => {
+
+  // This code filters the cart items to exclude sheets that the user already owns
+  const filteredSheets = cart.cart.filter((item) => {
+    // Check if the item has a valid sheets.id
+    const hasValidId = item.sheets.id;
+
+    // Check if the user doesn't already own this sheet
+    const isNotOwned = !userData?.some(
+      (data) => data.sheets.id === item.sheets.id
+    );
+
+    const notTheArranger = !userData?.some(
+      (data) => data.arrangers_pb_data.id === item.arrangers_pb_data.id
+    );
+
+    // Only include items that have a valid ID and are not already owned
+    return hasValidId && isNotOwned && notTheArranger;
+  });
+
+  const total = filteredSheets.reduce((acc, item) => {
     return acc + item.sheets.price;
   }, 0);
-  const [cartState, setCartState] = useState<
-    "cart" | "checkout" | "success" | "error"
-  >("cart");
+
   return (
-    <Sheet onOpenChange={() => setCartState("cart")}>
+    <Sheet onOpenChange={() => cart.setState("cart")}>
       <SheetTrigger asChild>
         <Button
           className="relative rounded-full"
@@ -39,9 +58,9 @@ export default function CartDrawer() {
           size={"icon"}
         >
           <ShoppingCart size={16} />
-          {cart.cart.length !== 0 ? (
+          {filteredSheets.length !== 0 ? (
             <div className="absolute top-0 right-1 text-red-500 font-black">
-              <p className="text-xs">{cart.cart.length}</p>
+              <p className="text-xs">{filteredSheets.length}</p>
             </div>
           ) : null}
         </Button>
@@ -49,7 +68,7 @@ export default function CartDrawer() {
       <SheetContent side={"bottom"} className="">
         <div className="flex flex-col max-w-[500px] mx-auto h-[75dvh]">
           <SheetHeader className="p-4">
-            {cartState !== "cart" && (
+            {cart.state !== "cart" && (
               <motion.div
                 initial={{ x: -50 }}
                 animate={{ x: 0 }}
@@ -60,14 +79,14 @@ export default function CartDrawer() {
                   <Button
                     className="rounded-full"
                     size={"icon"}
-                    onClick={() => setCartState("cart")}
+                    onClick={() => cart.setState("cart")}
                   >
                     <ShoppingCart size={16} />
                   </Button>
                   <Button
                     className="rounded-full"
                     size={"icon"}
-                    onClick={() => setCartState("checkout")}
+                    onClick={() => cart.setState("checkout")}
                   >
                     <CreditCard size={16} className="size-5" />
                   </Button>
@@ -77,15 +96,15 @@ export default function CartDrawer() {
                 </div>
                 <Progress
                   value={
-                    (cartState === "checkout" && 50) ||
-                    (cartState === "success" && 100) ||
+                    (cart.state === "checkout" && 50) ||
+                    (cart.state === "success" && 100) ||
                     0
                   }
                   className="duration-1000"
                 />
               </motion.div>
             )}
-            {cartState === "cart" && (
+            {cart.state === "cart" && (
               <motion.div
                 initial={{ x: -50 }}
                 animate={{ x: 0 }}
@@ -100,7 +119,7 @@ export default function CartDrawer() {
                 </SheetDescription>
               </motion.div>
             )}
-            {cartState === "checkout" && (
+            {cart.state === "checkout" && (
               <motion.div
                 initial={{ x: -50 }}
                 animate={{ x: 0 }}
@@ -117,7 +136,7 @@ export default function CartDrawer() {
             )}
           </SheetHeader>
           <div className="overflow-y-auto overflow-x-hidden flex p-4 flex-1">
-            {cartState === "cart" && (
+            {cart.state === "cart" && (
               <motion.div
                 initial={{ x: -50 }}
                 animate={{ x: 0 }}
@@ -127,7 +146,7 @@ export default function CartDrawer() {
               >
                 <ScrollArea>
                   <div className="flex-col flex gap-4 overflow-auto">
-                    {cart.cart.map((sheet) => {
+                    {filteredSheets.map((sheet) => {
                       return (
                         <div
                           key={sheet.sheets.id}
@@ -171,14 +190,14 @@ export default function CartDrawer() {
                   <Button
                     disabled={total === 0}
                     className="disabled:opacity-50 disabled:pointer-events-none"
-                    onClick={() => setCartState("checkout")}
+                    onClick={() => cart.setState("checkout")}
                   >
                     Check out
                   </Button>
                 </div>
               </motion.div>
             )}
-            {cartState === "checkout" && (
+            {cart.state === "checkout" && (
               <motion.div
                 initial={{ x: -50 }}
                 animate={{ x: 0 }}
@@ -200,22 +219,19 @@ export default function CartDrawer() {
                 >
                   <PaymentForm
                     total={total}
-                    sheets={cart.cart.map((sheet) => ({
+                    sheets={filteredSheets.map((sheet) => ({
                       id: sheet.sheets.id,
                       price: sheet.sheets.price,
+                      arranger_id: sheet.arrangers_pb_data.id,
                     }))}
-                    onSuccess={() => {
-                      cart.resetCart();
-                      setCartState("success");
-                    }}
                   />
                 </Elements>
-                <Button onClick={() => setCartState("cart")}>
+                <Button onClick={() => cart.setState("cart")}>
                   Back to cart
                 </Button>
               </motion.div>
             )}
-            {cartState === "success" && (
+            {cart.state === "success" && (
               <motion.div
                 initial={{ x: -50 }}
                 animate={{ x: 0 }}
@@ -227,12 +243,12 @@ export default function CartDrawer() {
                 <p>Thank you for purchasing!</p>
                 <Link href={"/library"}>
                   <SheetClose>
-                    <Button onClick={() => setCartState("cart")}>
+                    <Button onClick={() => cart.setState("cart")}>
                       View Library
                     </Button>
                   </SheetClose>
                 </Link>
-                <Button onClick={() => setCartState("cart")}>
+                <Button onClick={() => cart.setState("cart")}>
                   Back to cart
                 </Button>
               </motion.div>

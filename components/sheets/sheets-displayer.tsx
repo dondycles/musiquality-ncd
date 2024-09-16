@@ -10,9 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import ListViewer from "../list-viewer";
 import { PrivateSheetData, PublicSheetData } from "@/utils/db/types";
-
 import PageViewToggleBtn from "../page-view-toggle-btn";
-
 import SheetsDisplayerOrientor from "../orientor";
 import SheetCard from "./sheet-cart";
 import SheetBar from "./sheet-bar";

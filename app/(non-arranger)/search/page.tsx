@@ -1,6 +1,6 @@
 import SearchBar from "@/components/search-bar";
-import { db } from "../../utils/db";
-import { ArrangersPublicData, Sheets } from "../../utils/db/schema";
+import { db } from "../../../utils/db";
+import { ArrangersPublicData, Sheets } from "../../../utils/db/schema";
 import { eq, ilike, or, sql } from "drizzle-orm";
 import { Suspense } from "react";
 
@@ -42,7 +42,7 @@ export default async function SearchPage({
         Search results for: {searchParams.term}
       </h1>
       <Suspense>
-        <SearchBar />
+        <SearchBar baseUrl="/search" />
       </Suspense>
       <SheetsDisplayer>
         <SheetsDisplayerHeader>

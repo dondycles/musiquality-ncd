@@ -22,6 +22,8 @@ type Cart = {
   addToCart: (sheet: PublicSheetData) => void;
   removeToCart: (sheet: PublicSheetData) => void;
   resetCart: () => void;
+  state: "cart" | "checkout" | "success" | "error";
+  setState: (state: "cart" | "checkout" | "success" | "error") => void;
 };
 
 export const useCartStore = create<Cart>()(
@@ -49,6 +51,8 @@ export const useCartStore = create<Cart>()(
         set(() => {
           return { cart: [] };
         }),
+      state: "cart",
+      setState: (state) => set(() => ({ state })),
     }),
     { name: "cart", storage: createJSONStorage(() => storage) }
   )
@@ -102,5 +106,20 @@ export const usePagePreferences = create<PagePreferences>()(
     {
       name: "page-preferences",
     }
+  )
+);
+
+type ArrangerCenterPageState = {
+  view: "new" | "sales" | "profile";
+  setView: (view: "new" | "sales" | "profile") => void;
+};
+
+export const useArrangerCenterPageState = create<ArrangerCenterPageState>()(
+  persist(
+    (set) => ({
+      view: "new",
+      setView: (view) => set(() => ({ view })),
+    }),
+    { name: "arranger-center-page-state" }
   )
 );
