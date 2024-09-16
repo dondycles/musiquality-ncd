@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import { get, set, del } from "idb-keyval";
-import { PublicSheetData } from "./utils/db/types";
+import { SheetData } from "./utils/db/types";
 const storage: StateStorage = {
   getItem: async (name: string): Promise<string | null> => {
     // console.log(name, "has been retrieved");
@@ -18,9 +18,9 @@ const storage: StateStorage = {
 };
 
 type Cart = {
-  cart: PublicSheetData[];
-  addToCart: (sheet: PublicSheetData) => void;
-  removeToCart: (sheet: PublicSheetData) => void;
+  cart: SheetData[];
+  addToCart: (sheet: SheetData) => void;
+  removeToCart: (sheet: SheetData) => void;
   resetCart: () => void;
   state: "cart" | "checkout" | "success" | "error";
   setState: (state: "cart" | "checkout" | "success" | "error") => void;
