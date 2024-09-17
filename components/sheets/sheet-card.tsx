@@ -4,7 +4,7 @@ import SheetThumbnail from "./sheet-thumbnail";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import ArrangerAvatar from "../arranger.avatar";
-import CartAddButton from "../cart.add-button";
+import CartAddButton from "../cart/cart-add-button";
 
 export default function SheetCard({
   className,

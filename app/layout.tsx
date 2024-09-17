@@ -2,14 +2,14 @@ import "./globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import Nav from "@/components/nav";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
 import { Toaster } from "@/components/ui/toaster";
-import QueryProvider from "@/components/query-provider";
-import { UserDataProvider } from "@/components/user-data-provider";
+import QueryProvider from "@/components/providers/query-provider";
+import { UserDataProvider } from "@/components/providers/user-data-provider";
 
 const cormorant = localFont({
   src: [

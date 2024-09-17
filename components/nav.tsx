@@ -4,9 +4,9 @@ import UserBtn from "./user-btn";
 import { SignInButton } from "@clerk/nextjs";
 import { ThemeToggleBtn } from "./theme-toggle-btn";
 import { Button } from "./ui/button";
-import CartDrawer from "./cart.drawer";
+import CartDrawer from "./cart/cart-drawer";
 import { useContext } from "react";
-import { UserDataContext } from "./user-data-provider";
+import { UserDataContext } from "./providers/user-data-provider";
 export default function Nav() {
   const { isLoading, resource } = useContext(UserDataContext);
 

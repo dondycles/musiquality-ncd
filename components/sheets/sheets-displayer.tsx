@@ -12,7 +12,7 @@ import ListViewer from "../list-viewer";
 import { SheetData } from "@/utils/db/types";
 import PageViewToggleBtn from "../page-view-toggle-btn";
 import SheetsDisplayerOrientor from "../orientor";
-import SheetCard from "./sheet-cart";
+import SheetCard from "./sheet-card";
 import SheetBar from "./sheet-bar";
 
 interface SheetsDisplayerProps extends React.HTMLAttributes<HTMLDivElement> {}

@@ -1,6 +1,6 @@
 import Footer from "@/components/footer";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import ArrangerCenterNav from "./nav";
+import ArrangerCenterNav from "./_nav";
 
 export default function ArrangerLayout({
   children,

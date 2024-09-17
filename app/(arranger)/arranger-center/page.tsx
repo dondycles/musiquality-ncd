@@ -1,7 +1,7 @@
 import { RedirectToSignIn } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import ArrangerCenterView from "./view";
+import ArrangerCenterView from "./_components/view";
 
 export default async function ArrangerCenterPage({
   searchParams,

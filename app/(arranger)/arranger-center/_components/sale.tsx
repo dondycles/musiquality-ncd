@@ -2,6 +2,8 @@
 
 import CurrencyText from "@/components/currency-text";
 import { ArrangersPublicData, Sales, Sheets } from "@/utils/db/schema";
+import { DataTable } from "./sale-data-table";
+import { saleColumns } from "./sale-columns";
 
 export default function ArrangerCenterSale({
   sales,
@@ -22,10 +24,7 @@ export default function ArrangerCenterSale({
           amount={sales?.reduce((acc, s) => acc + s.sheets.price, 0) ?? 0}
         />
       </div>
-
-      {sales?.map((s) => {
-        return <div key={s.sales.id}>{s.sheets.title}</div>;
-      })}
+      <DataTable columns={saleColumns} data={sales ?? []} />
     </div>
   );
 }

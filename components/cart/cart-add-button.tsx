@@ -2,12 +2,12 @@
 
 import { SheetData } from "@/utils/db/types";
 import { useCartStore } from "@/store";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Pencil, ShoppingCart, X } from "lucide-react";
-import CurrencyText from "./currency-text";
+import CurrencyText from "../currency-text";
 import { ClassNameValue } from "tailwind-merge";
 import { cn } from "@/lib/utils";
-import { UserDataContext } from "./user-data-provider";
+import { UserDataContext } from "../providers/user-data-provider";
 import { useContext } from "react";
 import Link from "next/link";
 

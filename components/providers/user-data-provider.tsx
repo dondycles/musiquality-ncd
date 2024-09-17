@@ -12,26 +12,27 @@ import {
 } from "@/utils/db/schema";
 import { getUserWholeData } from "@/app/actions";
 import { UserResource } from "@clerk/types";
+
+export type Transaction = {
+  sheets: typeof Sheets.$inferSelect;
+  arrangers_pb_data: typeof ArrangersPublicData.$inferSelect;
+  sheets_file_url: typeof SheetsFileURL.$inferSelect;
+  library: typeof Library.$inferSelect;
+  transactions: typeof Transactions.$inferSelect;
+};
+
+export type Sale = {
+  sheets: typeof Sheets.$inferSelect;
+  arrangers_pb_data: typeof ArrangersPublicData.$inferSelect;
+  sales: typeof Sales.$inferSelect;
+};
+
 export type InitialState = {
-  transactions:
-    | {
-        sheets: typeof Sheets.$inferSelect;
-        arrangers_pb_data: typeof ArrangersPublicData.$inferSelect;
-        sheets_file_url: typeof SheetsFileURL.$inferSelect;
-        library: typeof Library.$inferSelect;
-        transactions: typeof Transactions.$inferSelect;
-      }[]
-    | null;
+  transactions: Transaction[] | null;
   isLoading: boolean;
   resource: UserResource | null;
   arrangerData: {
-    sales:
-      | {
-          sheets: typeof Sheets.$inferSelect;
-          arrangers_pb_data: typeof ArrangersPublicData.$inferSelect;
-          sales: typeof Sales.$inferSelect;
-        }[]
-      | null;
+    sales: Sale[] | null;
     arrangements: (typeof Sheets.$inferSelect)[] | null;
     arrangerData: typeof ArrangersPublicData.$inferSelect | null;
   } | null;

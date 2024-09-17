@@ -69,7 +69,14 @@ export const SheetsFileURL = pgTable("sheets_file_url", {
 export const Transactions = pgTable("transactions", {
   id: serial("id").primaryKey(),
   payment_intent_id: text("payment_intent_id").notNull(),
-  metadata: jsonb("metadata").notNull(),
+  metadata: jsonb("metadata")
+    .$type<
+      Array<{
+        id: number;
+        price: number;
+      }>
+    >()
+    .notNull(),
   price: real("price").notNull(),
   created_at: timestamp("created_at", { withTimezone: true })
     .defaultNow()

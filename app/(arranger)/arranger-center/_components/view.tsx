@@ -7,7 +7,7 @@ import ArrangerCenterSale from "./sale";
 import ArrangerCenterEdit from "./edit";
 import ArrangerCenterArrangements from "./arrangements";
 import { useContext } from "react";
-import { UserDataContext } from "@/components/user-data-provider";
+import { UserDataContext } from "@/components/providers/user-data-provider";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 

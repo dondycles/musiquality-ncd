@@ -1,7 +1,7 @@
 import ArrangerAvatar from "@/components/arranger.avatar";
 import BrandedText from "@/components/branded-text";
-import CartAddButton from "@/components/cart.add-button";
-import SheetCard from "@/components/sheets/sheet-cart";
+import CartAddButton from "@/components/cart/cart-add-button";
+import SheetCard from "@/components/sheets/sheet-card";
 import SheetThumbnail from "@/components/sheets/sheet-thumbnail";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/utils/db";

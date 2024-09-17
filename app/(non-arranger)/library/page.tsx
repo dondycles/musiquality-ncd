@@ -1,6 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { RedirectToSignIn } from "@clerk/nextjs";
-import LibraryClientPage from "./client";
+import LibraryClientPage from "./_components/client";
 export default async function LibraryPage({
   searchParams,
 }: {

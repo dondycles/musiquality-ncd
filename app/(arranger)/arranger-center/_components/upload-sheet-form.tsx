@@ -20,12 +20,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "../../../components/ui/button";
+import { Button } from "../../../../components/ui/button";
 import { Minus, Plus } from "lucide-react";
-import SheetThumbnail from "../../../components/sheets/sheet-thumbnail";
+import SheetThumbnail from "../../../../components/sheets/sheet-thumbnail";
 import { UploadButton } from "@/utils/uploadthing";
 import { useState } from "react";
-import SheetViewer from "../../../components/sheets/sheet-viewer";
+import SheetViewer from "../../../../components/sheets/sheet-viewer";
 import { useToast } from "@/hooks/use-toast";
 import { uploadSheet } from "@/app/actions";
 import { useUser } from "@clerk/nextjs";
@@ -35,7 +35,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../components/ui/select";
+} from "../../../../components/ui/select";
 const formSchema = z.object({
   title: z
     .string()
