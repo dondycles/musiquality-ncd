@@ -1,7 +1,7 @@
 "use client";
 import { UserDataContext } from "@/components/providers/user-data-provider";
 import { Suspense, useContext } from "react";
-import { Music } from "lucide-react";
+import { Loader, Music } from "lucide-react";
 import {
   SheetsDisplayer,
   SheetsDisplayerContent,
@@ -35,7 +35,9 @@ export default function LibraryClientPage({
         <SearchBar baseUrl="/library" />
       </Suspense>
       {isLoading ? (
-        <div>Loading...</div>
+        <div>
+          <Loader size={16} className="animate-spin mx-auto" />
+        </div>
       ) : (
         <div className="flex flex-col gap-4">
           <SheetsDisplayer>
@@ -75,7 +77,12 @@ export default function LibraryClientPage({
               }
             />
           </SheetsDisplayer>
-          <DataTable columns={transactionColumns} data={uniqueTransactions} />
+          <DataTable
+            columns={transactionColumns}
+            data={uniqueTransactions?.toSorted(
+              (a, b) => b!.created_at.getTime() - a!.created_at.getTime()
+            )}
+          />
         </div>
       )}
     </div>

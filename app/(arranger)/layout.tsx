@@ -8,12 +8,12 @@ export default function ArrangerLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-row mt-[70px] flex-1">
+    <div className="mt-[70px] flex-1 grid grid-cols-[69px_1fr]">
       <ArrangerCenterNav />
-      <ScrollArea className="flex-1 h-[calc(100dvh-70px)]">
+      <div className="flex-1 h-[calc(100dvh-70px)] overflow-auto">
         {children}
         <Footer />
-      </ScrollArea>
+      </div>
     </div>
   );
 }

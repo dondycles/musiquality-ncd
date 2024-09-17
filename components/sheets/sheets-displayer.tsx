@@ -93,14 +93,14 @@ const SheetsDisplayerContent = React.forwardRef<
 >(({ className, actionType, sheets, ...props }, ref) => (
   <Carousel
     ref={ref}
-    className={cn("", className)}
+    className={cn("flex-1", className)}
     opts={{
       align: "start",
       slidesToScroll: 1,
     }}
     {...props}
   >
-    <div className="flex flex-col">
+    <div className="flex flex-col ">
       <CarouselContent>
         <SheetsDisplayerOrientor
           actionType={actionType}

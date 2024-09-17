@@ -24,7 +24,15 @@ export default function ArrangerCenterSale({
           amount={sales?.reduce((acc, s) => acc + s.sheets.price, 0) ?? 0}
         />
       </div>
-      <DataTable columns={saleColumns} data={sales ?? []} />
+      <DataTable
+        columns={saleColumns}
+        data={
+          sales?.toSorted(
+            (a, b) =>
+              b.sales.created_at.getTime() - a.sales.created_at.getTime()
+          ) ?? []
+        }
+      />
     </div>
   );
 }

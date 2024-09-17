@@ -1,24 +1,10 @@
 import CurrencyText from "@/components/currency-text";
-import { Transaction, Sale } from "@/components/providers/user-data-provider";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Sale } from "@/components/providers/user-data-provider";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
-import Link from "next/link";
 export const saleColumns: ColumnDef<Sale>[] = [
   {
     accessorKey: "sales_created_at",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Date
-          <ArrowUpDown size={16} className="ml-1" />
-        </Button>
-      );
-    },
+    header: "Date",
     cell: ({ row }) => {
       return (
         <p className="capitalize text-xs">
