@@ -46,6 +46,7 @@ import {
 } from "@/lib/constants";
 import { ToastAction } from "../../../../components/ui/toast";
 import { Separator } from "../../../../components/ui/separator";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const formSchema = z.object({
   name: z.string().min(2, {
@@ -91,7 +92,7 @@ export default function ArrangerUpdateForm({
   arranger_data: typeof ArrangersPublicData.$inferSelect;
 }) {
   const { toast } = useToast();
-
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
   const [changes, setChanges] = useState({
@@ -155,6 +156,9 @@ export default function ArrangerUpdateForm({
     });
 
     setOpen(false);
+    queryClient.invalidateQueries({
+      queryKey: ["user-data", arranger_data.id],
+    });
   }
 
   useEffect(() => {
