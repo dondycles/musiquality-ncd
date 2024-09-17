@@ -18,7 +18,7 @@ export default async function ArrangerCenterPage({
         Arranger Center / {searchParams.view ?? "profile"}
       </h1>
       {!(["profile", "new", "sales", "arrangements", "edit"] as const).includes(
-        searchParams.view as typeof searchParams.view
+        searchParams.view ?? "profile"
       ) && (
         <p className="text-red-500">
           Invalid view parameter: {searchParams.view}

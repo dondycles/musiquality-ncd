@@ -73,7 +73,38 @@ export async function uploadSheet(
     .returning();
   if (!sheetUrlRes[0]) return { error: "No sheet file url data returned!" };
 
-  revalidatePath("/");
+  revalidatePath("/arranger-center");
+  return { success: { sheetRes, sheetUrlRes } };
+}
+
+export async function editSheet(
+  sheet: typeof Sheets.$inferSelect,
+  sheetFileUrl: string
+) {
+  const sheetRes = await db
+    .update(Sheets)
+    .set({
+      title: sheet.title,
+      price: sheet.price,
+      difficulty: sheet.difficulty,
+      genres: sheet.genres,
+      instruments_used: sheet.instruments_used,
+      og_artists: sheet.og_artists,
+      thumbnail_url: sheet.thumbnail_url,
+    })
+    .where(eq(Sheets.id, sheet.id))
+    .returning();
+  if (!sheetRes[0]) return { error: "No sheet data returned!" };
+  const sheetUrlRes = await db
+    .update(SheetsFileURL)
+    .set({
+      url: sheetFileUrl,
+    })
+    .where(eq(SheetsFileURL.sheet_id, sheet.id))
+    .returning();
+  if (!sheetUrlRes[0]) return { error: "No sheet file url data returned!" };
+
+  revalidatePath("/arranger-center");
   return { success: { sheetRes, sheetUrlRes } };
 }
 
@@ -224,6 +255,7 @@ export async function getArrangements(userId: string) {
   const res = await db
     .select()
     .from(Sheets)
+    .innerJoin(SheetsFileURL, eq(SheetsFileURL.sheet_id, Sheets.id))
     .where(eq(Sheets.arranger_id, userId));
   if (!res[0]) return { error: "No arrangements data returned!" };
   return { success: res };

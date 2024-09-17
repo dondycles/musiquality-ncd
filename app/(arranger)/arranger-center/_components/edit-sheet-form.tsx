@@ -27,7 +27,7 @@ import { UploadButton } from "@/utils/uploadthing";
 import { useState } from "react";
 import SheetViewer from "../../../../components/sheets/sheet-viewer";
 import { useToast } from "@/hooks/use-toast";
-import { uploadSheet } from "@/app/actions";
+import { editSheet, uploadSheet } from "@/app/actions";
 import { useUser } from "@clerk/nextjs";
 import {
   Select,
@@ -36,6 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../../components/ui/select";
+import { Sheets, SheetsFileURL } from "@/utils/db/schema";
 import { useQueryClient } from "@tanstack/react-query";
 const formSchema = z.object({
   title: z
@@ -83,7 +84,13 @@ const formSchema = z.object({
   price: z.coerce.number().min(5),
 });
 
-export default function ArrangerUploadSheetForm() {
+export default function ArrangerEditSheetForm({
+  sheet,
+}: {
+  sheet: { sheets: typeof Sheets.$inferSelect } & {
+    sheets_file_url: typeof SheetsFileURL.$inferSelect;
+  };
+}) {
   const queryClient = useQueryClient();
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const { toast } = useToast();
@@ -91,25 +98,18 @@ export default function ArrangerUploadSheetForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      og_artists: [
-        {
-          value: "",
-        },
-      ],
-      thumbnail_url: "",
-      sheets_file_url: "",
-      instruments_used: [
-        {
-          value: "",
-        },
-      ],
-      difficulty: "Beginner",
-      genres: [
-        {
-          value: "",
-        },
-      ],
+      title: sheet.sheets.title,
+      og_artists: sheet.sheets.og_artists.map((a) => ({ value: a })),
+      thumbnail_url: sheet.sheets.thumbnail_url,
+      sheets_file_url: sheet.sheets_file_url.url,
+      instruments_used: sheet.sheets.instruments_used?.map((i) => ({
+        value: i,
+      })),
+      difficulty: sheet.sheets.difficulty ?? "Beginner",
+      genres: sheet.sheets.genres?.map((i) => ({
+        value: i,
+      })),
+      price: sheet.sheets.price,
     },
   });
 
@@ -150,20 +150,22 @@ export default function ArrangerUploadSheetForm() {
     if (!user)
       return toast({
         title: "Error",
-        description: "Please login to upload a sheet.",
+        description: "Please login to edit a sheet.",
         variant: "destructive",
       });
-    const res = await uploadSheet(
+    const res = await editSheet(
       {
+        id: sheet.sheets.id,
         title: data.title,
         og_artists: data.og_artists.map((artist) => artist.value),
         thumbnail_url: data.thumbnail_url,
         arranger_id: user.id,
         difficulty: data.difficulty,
-        genres: data.genres?.map((genre) => genre.value),
+        genres: data.genres.map((genre) => genre.value),
         instruments_used: data.instruments_used.map(
           (instrument) => instrument.value
         ),
+        created_at: sheet.sheets.created_at,
         price: data.price,
       },
       data.sheets_file_url
@@ -197,6 +199,7 @@ export default function ArrangerUploadSheetForm() {
                         <DialogTrigger className="mx-auto">
                           <div className="flex flex-col gap-4 flex-1">
                             <SheetThumbnail
+                              key={field.value}
                               className="border rounded-md overflow-hidden flex-1"
                               _setThumbnailUrl={(url) => {
                                 form.setValue("thumbnail_url", url);
@@ -428,7 +431,6 @@ export default function ArrangerUploadSheetForm() {
                 </FormItem>
               )}
             />
-
             <FormField
               name="price"
               render={({ field }) => (
@@ -441,7 +443,6 @@ export default function ArrangerUploadSheetForm() {
                 </FormItem>
               )}
             />
-
             <Button type="submit" className="mt-auto mb-0">
               Submit
             </Button>

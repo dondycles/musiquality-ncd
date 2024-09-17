@@ -33,7 +33,12 @@ export type InitialState = {
   resource: UserResource | null;
   arrangerData: {
     sales: Sale[] | null;
-    arrangements: (typeof Sheets.$inferSelect)[] | null;
+    arrangements:
+      | {
+          sheets: typeof Sheets.$inferSelect;
+          sheets_file_url: typeof SheetsFileURL.$inferSelect;
+        }[]
+      | null;
     arrangerData: typeof ArrangersPublicData.$inferSelect | null;
   } | null;
 };
@@ -49,7 +54,7 @@ export const UserDataContext = createContext<InitialState>(initialState);
 export function UserDataProvider({ children }: { children: React.ReactNode }) {
   const { user, isLoaded, isSignedIn } = useUser();
 
-  const { data, isLoading } = useQuery({
+  const { data, isFetching } = useQuery({
     enabled: (user !== undefined || user !== null) && isLoaded && isSignedIn,
     queryKey: ["user-data", user?.id],
     queryFn: async () => await getUserWholeData(),
@@ -58,7 +63,7 @@ export function UserDataProvider({ children }: { children: React.ReactNode }) {
   return (
     <UserDataContext.Provider
       value={{
-        isLoading: isLoading || !isLoaded,
+        isLoading: isFetching || !isLoaded,
         transactions: data?.success?.transactions.success ?? null,
         resource: user === undefined || user === null ? null : user,
         arrangerData:

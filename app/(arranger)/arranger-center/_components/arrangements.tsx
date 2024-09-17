@@ -29,7 +29,7 @@ export default function ArrangerCenterArrangements() {
         actionType="top-selling"
         sheets={
           arrangerData?.arrangements?.map((a) => ({
-            sheets: a,
+            sheets: a.sheets,
             arrangers_pb_data: {
               ...arrangerData.arrangerData!,
             },

@@ -10,12 +10,18 @@ import { useContext } from "react";
 import { UserDataContext } from "@/components/providers/user-data-provider";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Loader } from "lucide-react";
 
 export default function ArrangerCenterView() {
   const view = useSearchParams().get("view") ?? "profile";
   const { arrangerData, isLoading } = useContext(UserDataContext);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div>
+        <Loader size={16} className="animate-spin mx-auto" />
+      </div>
+    );
   if (!arrangerData?.arrangerData)
     return (
       <div className="flex flex-col gap-4 mt-[70px] flex-1 items-center justify-center  py-4">

@@ -2,7 +2,7 @@
 
 import { UserDataContext } from "@/components/providers/user-data-provider";
 import { useSearchParams } from "next/navigation";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -19,15 +19,19 @@ import {
 } from "@/components/ui/popover";
 import { Check, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ArrangerEditSheetForm from "./edit-sheet-form";
 export default function ArrangerCenterEdit() {
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(searchParams.get("sheet_id") ?? "");
 
-  const { arrangerData } = useContext(UserDataContext);
+  const { arrangerData, isLoading } = useContext(UserDataContext);
 
   const arrangements = arrangerData?.arrangements ?? [];
 
+  const targetedSheet = arrangerData?.arrangements?.find(
+    (a) => a.sheets.id === Number(value)
+  );
   return (
     <div className="flex flex-col gap-4">
       <Popover open={open} onOpenChange={setOpen}>
@@ -39,7 +43,8 @@ export default function ArrangerCenterEdit() {
             className="justify-between"
           >
             {value
-              ? arrangements.find((a) => String(a.id) === value)?.title
+              ? arrangements.find((a) => String(a.sheets.id) === value)?.sheets
+                  .title
               : "Select arrangement..."}
             <Search size={16} className="ml-1 shrink-0 opacity-50" />
           </Button>
@@ -52,18 +57,20 @@ export default function ArrangerCenterEdit() {
               <CommandGroup>
                 {arrangements.map((a) => (
                   <CommandItem
-                    key={a.id}
-                    value={String(a.id)}
+                    key={a.sheets.id}
+                    value={String(a.sheets.id)}
                     onSelect={(currentValue) => {
                       setValue(currentValue === value ? "" : currentValue);
                       setOpen(false);
                     }}
                   >
-                    {a.title}
+                    {a.sheets.title}
                     <Check
                       className={cn(
                         "ml-auto h-4 w-4",
-                        value === String(a.id) ? "opacity-100" : "opacity-0"
+                        value === String(a.sheets.id)
+                          ? "opacity-100"
+                          : "opacity-0"
                       )}
                     />
                   </CommandItem>
@@ -73,7 +80,12 @@ export default function ArrangerCenterEdit() {
           </Command>
         </PopoverContent>
       </Popover>
-      {arrangerData?.arrangements?.find((a) => a.id === Number(value))?.title}
+      {targetedSheet && (
+        <ArrangerEditSheetForm
+          key={targetedSheet.sheets.id}
+          sheet={targetedSheet}
+        />
+      )}
     </div>
   );
 }
