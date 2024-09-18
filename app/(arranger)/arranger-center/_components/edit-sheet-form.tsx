@@ -235,8 +235,9 @@ export default function ArrangerEditSheetForm({
                       //   },
                       // }}
                       // className="ut-button:bg-foreground ut-button:text-background ut-label:text-background flex rounded-md justify-normal p-2 mx-auto ut-button:size-9 "
-                      className="p-4 h-full border rounded-md ut-button:bg-foreground hover:ut-button:bg-foreground/90 ut-button:ring-foreground"
+                      className="p-4 h-full border rounded-md ut-button:bg-foreground hover:ut-button:bg-foreground/90 ut-button:ring-foreground ut-button:text-background"
                       endpoint="sheet"
+                      disabled={form.formState.isSubmitting || uploadingPdf}
                       onClientUploadComplete={(data) => {
                         form.setValue("sheets_file_url", data[0].url);
                         setUploadingPdf(false);
@@ -443,7 +444,11 @@ export default function ArrangerEditSheetForm({
                 </FormItem>
               )}
             />
-            <Button type="submit" className="mt-auto mb-0">
+            <Button
+              disabled={form.formState.isSubmitting || uploadingPdf}
+              type="submit"
+              className="mt-auto mb-0"
+            >
               Submit
             </Button>
           </div>

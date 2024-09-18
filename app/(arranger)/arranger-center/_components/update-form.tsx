@@ -23,6 +23,7 @@ import { UploadButton } from "@/utils/uploadthing";
 import { updateArranger } from "@/app/actions";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -130,6 +131,12 @@ export default function ArrangerUpdateForm({
   });
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
+    if (imageUploading) {
+      return toast({
+        description: "Please wait for the image to upload.",
+        variant: "destructive",
+      });
+    }
     const res = await updateArranger({
       id: arranger_data.id,
       name: values.name,
@@ -167,7 +174,6 @@ export default function ArrangerUpdateForm({
       const arrangerValue = arranger_data[field];
 
       return formValue !== arrangerValue;
-      // }
     };
 
     setChanges({
@@ -191,6 +197,12 @@ export default function ArrangerUpdateForm({
     <Dialog
       open={open}
       onOpenChange={(state) => {
+        if (imageUploading && !state) {
+          return toast({
+            description: "Please wait for the image to upload.",
+            variant: "destructive",
+          });
+        }
         if (Object.values(changes).some((change) => change)) {
           if (state === false) {
             return toast({
@@ -215,6 +227,7 @@ export default function ArrangerUpdateForm({
             });
           }
         }
+
         setOpen(state);
         form.reset();
       }}
@@ -236,18 +249,25 @@ export default function ArrangerUpdateForm({
               control={form.control}
               name="avatar_url"
               render={({ field }) => (
-                <FormItem className="mx-auto flex justify-center flex-col items-center">
+                <FormItem
+                  className={`mx-auto flex justify-center flex-col items-center ${
+                    imageUploading
+                      ? "animate-pulse pointer-events-none cursor-not-allowed"
+                      : ""
+                  }`}
+                >
                   <ArrangerAvatar
                     size={128}
                     arranger_data={{
                       ...arranger_data,
                       avatar_url: field.value,
                     }}
+                    className="pointer-events-none"
                   />
                   <UploadButton
-                    className="ut-button:bg-foreground hover:ut-button:bg-foreground/90 ut-button:ring-foreground"
+                    className="ut-button:bg-foreground hover:ut-button:bg-foreground/90 ut-button:ring-foreground ut-button:text-background"
                     endpoint="imageUploader"
-                    disabled={imageUploading}
+                    disabled={imageUploading || form.formState.isSubmitting}
                     onClientUploadComplete={(res) => {
                       form.setValue("avatar_url", res?.[0].url);
                       setImageUploading(false);
@@ -346,14 +366,17 @@ export default function ArrangerUpdateForm({
             />
 
             <div className="flex flex-row gap-4 justify-end">
+              <DialogClose>
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+              </DialogClose>
               <Button
-                onClick={() => setOpen(false)}
-                type="button"
-                variant="outline"
+                type="submit"
+                disabled={imageUploading || form.formState.isSubmitting}
               >
-                Cancel
+                Update Profile
               </Button>
-              <Button type="submit">Update Profile</Button>
             </div>
           </form>
         </Form>
