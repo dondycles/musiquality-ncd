@@ -1,7 +1,12 @@
 import CurrencyText from "@/components/currency-text";
 import { CurrentArrangerSales } from "@/utils/db/infer-types";
 import { ColumnDef } from "@tanstack/react-table";
-export const saleColumns: ColumnDef<CurrentArrangerSales>[] = [
+export const saleColumns: ColumnDef<{
+  sheet: Array<Pick<CurrentArrangerSales, "sheet">>;
+  id: string;
+  created_at: Date;
+  total: number;
+}>[] = [
   {
     accessorKey: "sales_created_at",
     header: "Date",
@@ -17,27 +22,25 @@ export const saleColumns: ColumnDef<CurrentArrangerSales>[] = [
     accessorKey: "sheets_title",
     header: "Title",
     cell: ({ row }) => {
-      return <p className="capitalize text-xs">{row.original.sheet?.title}</p>;
+      return (
+        <p className="capitalize text-xs line-clamp-2">
+          {row.original.sheet.flatMap((s) => s?.sheet?.title).join(", ")}
+        </p>
+      );
     },
   },
   {
     accessorKey: "sheets_price",
     header: "Price",
     cell: ({ row }) => {
-      return (
-        <CurrencyText branded={false} amount={row.original.sheet?.price || 0} />
-      );
+      return <CurrencyText branded={false} amount={row.original.total || 0} />;
     },
   },
   {
     accessorKey: "sales_payment_intent",
     header: "Payment Intent",
     cell: ({ row }) => {
-      return (
-        <p className="text-xs text-muted-foreground">
-          {row.original.payment_intent}
-        </p>
-      );
+      return <p className="text-xs text-muted-foreground">{row.original.id}</p>;
     },
   },
 ];

@@ -245,6 +245,11 @@ export async function getArrangerData(userId: string) {
         with: {
           fileUrl: true,
           arranger: true,
+          sale: {
+            with: {
+              sheet: true,
+            },
+          },
         },
       },
       sale: {

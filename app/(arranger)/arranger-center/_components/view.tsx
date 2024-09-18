@@ -11,9 +11,10 @@ import { UserDataContext } from "@/components/providers/user-data-provider";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
+import ArrangerCenterDashboard from "./dashboard";
 
 export default function ArrangerCenterView() {
-  const view = useSearchParams().get("view") ?? "profile";
+  const view = useSearchParams().get("view") ?? "dashboard";
   const { arrangerData, isLoading } = useContext(UserDataContext);
 
   const sales = arrangerData?.sale ?? [];
@@ -41,11 +42,13 @@ export default function ArrangerCenterView() {
   if (view === "new") {
     return <ArrangerUploadSheetForm />;
   }
-  if (view === "sales") {
-    return <ArrangerCenterSale sales={sales} />;
-  }
-  if (view === "arrangements") {
-    return <ArrangerCenterArrangements sheets={sheets} />;
+  if (view === "dashboard") {
+    return (
+      <ArrangerCenterDashboard>
+        <ArrangerCenterSale sales={sales} />
+        <ArrangerCenterArrangements sheets={sheets} />
+      </ArrangerCenterDashboard>
+    );
   }
   if (view === "edit") {
     return <ArrangerCenterEdit sheets={sheets} />;

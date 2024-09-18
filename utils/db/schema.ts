@@ -128,7 +128,6 @@ export const sheetsRelations = relations(Sheets, ({ one, many }) => ({
     references: [SheetsFileURL.sheet_id],
     relationName: "sheet_pdf",
   }),
-  transaction: many(Transactions, { relationName: "sheet_transaction" }),
   library: many(Library, { relationName: "sheet_library" }),
   sale: many(Sales, { relationName: "sheet_sale" }),
 }));
@@ -150,7 +149,6 @@ export const sheetsFileURLRelations = relations(SheetsFileURL, ({ one }) => ({
 }));
 
 export const transactionsRelations = relations(Transactions, ({ many }) => ({
-  sheet: many(Sheets, { relationName: "sheet_transaction" }),
   library: many(Library, { relationName: "transaction_library" }),
 }));
 

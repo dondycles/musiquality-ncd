@@ -88,6 +88,26 @@ export const arrangementColumns: ColumnDef<CurrentArrangerData["sheet"][0]>[] =
       },
     },
     {
+      accessorKey: "qty_total",
+      header: "Qty & Total",
+      cell: ({ row }) => {
+        return (
+          <p className="text-xs">
+            {row.original.sale.length} /{" "}
+            <CurrencyText
+              branded={false}
+              amount={
+                row.original.sale.reduce(
+                  (acc, sale) => acc + (sale.sheet?.price || 0),
+                  0
+                ) || 0
+              }
+            />
+          </p>
+        );
+      },
+    },
+    {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => {

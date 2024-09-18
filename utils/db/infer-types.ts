@@ -61,6 +61,11 @@ export type CurrentArrangerData = InferResultType<
       with: {
         fileUrl: true;
         arranger: true;
+        sale: {
+          with: {
+            sheet: true;
+          };
+        };
       };
     };
     sale: {
