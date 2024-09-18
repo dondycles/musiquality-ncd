@@ -29,15 +29,6 @@ export default function ArrangerCenterNav() {
       </Button>
       <Button
         onClick={() => {
-          router.push("/arranger-center?view=edit");
-        }}
-        size="icon"
-        variant={view === "edit" ? "default" : "ghost"}
-      >
-        <Pencil size={16} />
-      </Button>
-      <Button
-        onClick={() => {
           router.push("/arranger-center?view=sales");
         }}
         size="icon"
@@ -50,7 +41,9 @@ export default function ArrangerCenterNav() {
           router.push("/arranger-center?view=arrangements");
         }}
         size="icon"
-        variant={view === "arrangements" ? "default" : "ghost"}
+        variant={
+          view === "arrangements" || view === "edit" ? "default" : "ghost"
+        }
       >
         <Music size={16} />
       </Button>

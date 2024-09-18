@@ -38,6 +38,7 @@ import {
 } from "../../../../components/ui/select";
 import { Sheets, SheetsFileURL } from "@/utils/db/schema";
 import { useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 const formSchema = z.object({
   title: z
     .string()
@@ -451,6 +452,14 @@ export default function ArrangerEditSheetForm({
             >
               Submit
             </Button>
+            <Link
+              href={`/arranger-center?view=arrangements`}
+              className="w-full"
+            >
+              <Button variant="outline" type="button" className="w-full">
+                Cancel
+              </Button>
+            </Link>
           </div>
         </div>
       </form>

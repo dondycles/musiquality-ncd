@@ -1,7 +1,7 @@
 "use client";
 
 import CurrencyText from "@/components/currency-text";
-import { DataTable } from "./sale-data-table";
+import { SaleDataTable } from "./sale-data-table";
 import { saleColumns } from "./sale-columns";
 import { CurrentArrangerSales } from "@/utils/db/infer-types";
 
@@ -20,7 +20,7 @@ export default function ArrangerCenterSale({
           }
         />
       </div>
-      <DataTable
+      <SaleDataTable
         columns={saleColumns}
         data={
           sales?.toSorted(
