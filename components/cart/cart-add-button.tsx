@@ -23,10 +23,11 @@ export default function CartAddButton({
   branded?: boolean;
 }) {
   const { addToCart, cart, removeToCart } = useCartStore();
-  const { isLoading, transactions, resource } = useContext(UserDataContext);
+  const { isLoading, userTransactions, resource } = useContext(UserDataContext);
+  const library = userTransactions?.flatMap((item) => item.library);
   const isInCart = cart.find((item) => item.sheets.id === sheet.sheets.id);
   const isPurchased = Boolean(
-    transactions?.find((item) => item.sheets.id === sheet.sheets.id)
+    library?.find((item) => item.sheet?.id === sheet.sheets.id)
   );
   const isMyArrangement = Boolean(sheet.arrangers_pb_data.id === resource?.id);
 

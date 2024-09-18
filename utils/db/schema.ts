@@ -1,4 +1,5 @@
 import { SOCIAL_MEDIA_BASE_URLS, SOCIAL_MEDIA_TYPES } from "@/lib/constants";
+import { relations } from "drizzle-orm";
 import {
   integer,
   jsonb,
@@ -114,3 +115,67 @@ export const Sales = pgTable("sales", {
     onDelete: "no action",
   }),
 });
+
+// Relations
+export const sheetsRelations = relations(Sheets, ({ one, many }) => ({
+  arranger: one(ArrangersPublicData, {
+    fields: [Sheets.arranger_id],
+    references: [ArrangersPublicData.id],
+    relationName: "sheet_arranger",
+  }),
+  fileUrl: one(SheetsFileURL, {
+    fields: [Sheets.id],
+    references: [SheetsFileURL.sheet_id],
+    relationName: "sheet_pdf",
+  }),
+  transaction: many(Transactions, { relationName: "sheet_transaction" }),
+  library: many(Library, { relationName: "sheet_library" }),
+  sale: many(Sales, { relationName: "sheet_sale" }),
+}));
+
+export const arrangersPublicDataRelations = relations(
+  ArrangersPublicData,
+  ({ many }) => ({
+    sheet: many(Sheets, { relationName: "sheet_arranger" }),
+    sale: many(Sales, { relationName: "arranger_sale" }),
+  })
+);
+
+export const sheetsFileURLRelations = relations(SheetsFileURL, ({ one }) => ({
+  sheet: one(Sheets, {
+    fields: [SheetsFileURL.sheet_id],
+    references: [Sheets.id],
+    relationName: "sheet_pdf",
+  }),
+}));
+
+export const transactionsRelations = relations(Transactions, ({ many }) => ({
+  sheet: many(Sheets, { relationName: "sheet_transaction" }),
+  library: many(Library, { relationName: "transaction_library" }),
+}));
+
+export const libraryRelations = relations(Library, ({ one }) => ({
+  sheet: one(Sheets, {
+    fields: [Library.sheet],
+    references: [Sheets.id],
+    relationName: "sheet_library",
+  }),
+  transaction: one(Transactions, {
+    fields: [Library.payment_intent],
+    references: [Transactions.payment_intent_id],
+    relationName: "transaction_library",
+  }),
+}));
+
+export const salesRelations = relations(Sales, ({ one }) => ({
+  sheet: one(Sheets, {
+    fields: [Sales.sheet],
+    references: [Sheets.id],
+    relationName: "sheet_sale",
+  }),
+  arranger: one(ArrangersPublicData, {
+    fields: [Sales.arranger_id],
+    references: [ArrangersPublicData.id],
+    relationName: "arranger_sale",
+  }),
+}));

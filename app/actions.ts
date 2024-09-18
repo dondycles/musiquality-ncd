@@ -13,6 +13,7 @@ import {
 import { db } from "../utils/db";
 import { eq } from "drizzle-orm";
 import Stripe from "stripe";
+import { CurrentUserWholeData } from "@/utils/db/infer-types";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!);
 
@@ -220,71 +221,64 @@ export async function updateTransaction(
 }
 
 export async function getUserTransactions(userId: string) {
-  const res = await db
-    .select()
-    .from(Transactions)
-    .innerJoin(
-      Library,
-      eq(Transactions.payment_intent_id, Library.payment_intent)
-    )
-    .innerJoin(Sheets, eq(Library.sheet, Sheets.id))
-    .innerJoin(
-      ArrangersPublicData,
-      eq(Sheets.arranger_id, ArrangersPublicData.id)
-    )
-    .innerJoin(SheetsFileURL, eq(Sheets.id, SheetsFileURL.sheet_id))
-    .where(eq(Transactions.user_id, userId));
-  if (!res[0]) return { error: "No transaction data returned!" };
-  return { success: res };
-}
-
-export async function getSales(userId: string) {
-  const res = await db
-    .select()
-    .from(Sales)
-    .innerJoin(Sheets, eq(Sales.sheet, Sheets.id))
-    .innerJoin(
-      ArrangersPublicData,
-      eq(Sheets.arranger_id, ArrangersPublicData.id)
-    )
-    .where(eq(Sales.arranger_id, userId));
-  if (!res[0]) return { error: "No sales data returned!" };
-  return { success: res };
-}
-export async function getArrangements(userId: string) {
-  const res = await db
-    .select()
-    .from(Sheets)
-    .innerJoin(SheetsFileURL, eq(SheetsFileURL.sheet_id, Sheets.id))
-    .where(eq(Sheets.arranger_id, userId));
-  if (!res[0]) return { error: "No arrangements data returned!" };
-  return { success: res };
+  return await db.query.Transactions.findMany({
+    with: {
+      library: {
+        with: {
+          sheet: {
+            with: {
+              fileUrl: true,
+              arranger: true,
+            },
+          },
+        },
+      },
+    },
+    where: eq(Transactions.user_id, userId),
+  });
 }
 
 export async function getArrangerData(userId: string) {
-  const res = await db.query.ArrangersPublicData.findFirst({
+  return await db.query.ArrangersPublicData.findFirst({
+    with: {
+      sheet: {
+        with: {
+          fileUrl: true,
+          arranger: true,
+        },
+      },
+      sale: {
+        with: {
+          sheet: {
+            with: {
+              fileUrl: true,
+              arranger: true,
+            },
+          },
+        },
+      },
+    },
     where: eq(ArrangersPublicData.id, userId),
   });
-  if (!res) return { error: "No arranger data returned!" };
-  return { success: res };
 }
 
-export async function getUserWholeData() {
+export async function getUserWholeData(): Promise<CurrentUserWholeData> {
   const user = await currentUser();
-  if (!user) return { error: "No user!" };
+  if (!user)
+    return {
+      error: "No user!",
+      userTransactions: null,
+      arrangerData: null,
+    };
 
-  const transactions = await getUserTransactions(user.id);
-  const sales = await getSales(user.id);
-  const arrangements = await getArrangements(user.id);
-  const arrangerData = await getArrangerData(user.id);
-
+  const res = await Promise.all([
+    getUserTransactions(user.id),
+    getArrangerData(user.id),
+  ]);
   return {
-    success: {
-      transactions,
-      sales,
-      arrangements,
-      arrangerData,
-    },
+    userTransactions: res[0],
+    arrangerData: res[1] ?? null,
+    error: null,
   };
 }
 

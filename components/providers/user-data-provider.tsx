@@ -12,6 +12,10 @@ import {
 } from "@/utils/db/schema";
 import { getUserWholeData } from "@/app/actions";
 import { UserResource } from "@clerk/types";
+import {
+  CurrentArrangerData,
+  CurrentUserTransactions,
+} from "@/utils/db/infer-types";
 
 export type Transaction = {
   sheets: typeof Sheets.$inferSelect;
@@ -28,23 +32,14 @@ export type Sale = {
 };
 
 export type InitialState = {
-  transactions: Transaction[] | null;
+  userTransactions: CurrentUserTransactions[] | null;
   isLoading: boolean;
   resource: UserResource | null;
-  arrangerData: {
-    sales: Sale[] | null;
-    arrangements:
-      | {
-          sheets: typeof Sheets.$inferSelect;
-          sheets_file_url: typeof SheetsFileURL.$inferSelect;
-        }[]
-      | null;
-    arrangerData: typeof ArrangersPublicData.$inferSelect | null;
-  } | null;
+  arrangerData: CurrentArrangerData | null;
 };
 
 const initialState: InitialState = {
-  transactions: null,
+  userTransactions: null,
   isLoading: true,
   resource: null,
   arrangerData: null,
@@ -64,16 +59,9 @@ export function UserDataProvider({ children }: { children: React.ReactNode }) {
     <UserDataContext.Provider
       value={{
         isLoading: isFetching || !isLoaded,
-        transactions: data?.success?.transactions.success ?? null,
+        userTransactions: data?.userTransactions ?? null,
         resource: user === undefined || user === null ? null : user,
-        arrangerData:
-          data?.success === undefined
-            ? null
-            : {
-                sales: data.success.sales.success ?? null,
-                arrangements: data.success.arrangements.success ?? null,
-                arrangerData: data.success.arrangerData.success ?? null,
-              },
+        arrangerData: data?.arrangerData ?? null,
       }}
     >
       {children}

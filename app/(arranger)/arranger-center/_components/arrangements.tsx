@@ -1,6 +1,4 @@
 "use client";
-import { UserDataContext } from "@/components/providers/user-data-provider";
-import { useContext } from "react";
 import {
   SheetsDisplayer,
   SheetsDisplayerHeader,
@@ -10,12 +8,23 @@ import {
   SheetsDisplayerViewToggleBtn,
 } from "@/components/sheets/sheets-displayer";
 import { Music } from "lucide-react";
+import { SheetData } from "@/utils/db/types";
+import { CurrentArrangerData } from "@/utils/db/infer-types";
 
-export default function ArrangerCenterArrangements() {
-  const { arrangerData, isLoading } = useContext(UserDataContext);
-
-  if (isLoading) return <div>Loading...</div>;
-
+export default function ArrangerCenterArrangements({
+  sheets,
+}: {
+  sheets: CurrentArrangerData["sheet"];
+}) {
+  const arrangements =
+    sheets.map(
+      (s) =>
+        ({
+          arrangers_pb_data: s.arranger,
+          sheets: s,
+          sheets_file_url: s.fileUrl,
+        } as SheetData)
+    ) ?? [];
   return (
     <SheetsDisplayer>
       <SheetsDisplayerHeader>
@@ -25,18 +34,7 @@ export default function ArrangerCenterArrangements() {
         <SheetsDisplayerTitle>Your Arrangements</SheetsDisplayerTitle>
         <SheetsDisplayerViewToggleBtn actionType="top-selling" />
       </SheetsDisplayerHeader>
-      <SheetsDisplayerContent
-        actionType="top-selling"
-        sheets={
-          arrangerData?.arrangements?.map((a) => ({
-            sheets: a.sheets,
-            arrangers_pb_data: {
-              ...arrangerData.arrangerData!,
-            },
-            sheets_file_url: null,
-          })) || []
-        }
-      />
+      <SheetsDisplayerContent actionType="top-selling" sheets={arrangements} />
     </SheetsDisplayer>
   );
 }

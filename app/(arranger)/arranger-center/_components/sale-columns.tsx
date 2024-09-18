@@ -1,14 +1,14 @@
 import CurrencyText from "@/components/currency-text";
-import { Sale } from "@/components/providers/user-data-provider";
+import { CurrentArrangerSales } from "@/utils/db/infer-types";
 import { ColumnDef } from "@tanstack/react-table";
-export const saleColumns: ColumnDef<Sale>[] = [
+export const saleColumns: ColumnDef<CurrentArrangerSales>[] = [
   {
     accessorKey: "sales_created_at",
     header: "Date",
     cell: ({ row }) => {
       return (
         <p className="capitalize text-xs">
-          {new Date(row.original.sales.created_at).toLocaleString()}
+          {new Date(row.original.created_at).toLocaleString()}
         </p>
       );
     },
@@ -17,7 +17,7 @@ export const saleColumns: ColumnDef<Sale>[] = [
     accessorKey: "sheets_title",
     header: "Title",
     cell: ({ row }) => {
-      return <p className="capitalize text-xs">{row.original.sheets.title}</p>;
+      return <p className="capitalize text-xs">{row.original.sheet?.title}</p>;
     },
   },
   {
@@ -25,7 +25,7 @@ export const saleColumns: ColumnDef<Sale>[] = [
     header: "Price",
     cell: ({ row }) => {
       return (
-        <CurrencyText branded={false} amount={row.original.sheets.price} />
+        <CurrencyText branded={false} amount={row.original.sheet?.price || 0} />
       );
     },
   },
@@ -35,7 +35,7 @@ export const saleColumns: ColumnDef<Sale>[] = [
     cell: ({ row }) => {
       return (
         <p className="text-xs text-muted-foreground">
-          {row.original.sales.payment_intent}
+          {row.original.payment_intent}
         </p>
       );
     },

@@ -26,21 +26,20 @@ import { ClassNameValue } from "tailwind-merge";
 import { cn } from "@/lib/utils";
 const stripe = getStripe();
 export default function CartDrawer() {
-  const { transactions, arrangerData } = useContext(UserDataContext);
+  const { userTransactions, arrangerData } = useContext(UserDataContext);
   const cart = useCartStore();
-
+  const library = userTransactions?.flatMap((item) => item.library);
   // This code filters the cart items to exclude sheets that the user already owns
   const filteredSheets = cart.cart.filter((item) => {
     // Check if the item has a valid sheets.id
     const hasValidId = item.sheets.id;
 
     // Check if the user doesn't already own this sheet
-    const isNotOwned = !transactions?.some(
-      (trans) => trans.sheets.id === item.sheets.id
+    const isNotOwned = !library?.some(
+      (trans) => trans.sheet?.id === item.sheets.id
     );
 
-    const notTheArranger =
-      arrangerData?.arrangerData?.id !== item.arrangers_pb_data.id;
+    const notTheArranger = arrangerData?.id !== item.arrangers_pb_data.id;
 
     // Only include items that have a valid ID and are not already owned
     return hasValidId && isNotOwned && notTheArranger;
