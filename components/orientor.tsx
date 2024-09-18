@@ -1,5 +1,6 @@
 "use client";
 import { usePagePreferences } from "@/store";
+import React from "react";
 
 export default function Orientor({
   actionType,
@@ -18,5 +19,9 @@ export default function Orientor({
     (actionType === "search" && pagePreferences.searchSheetsView) ||
     "col";
 
-  return view === "col" ? col : row;
+  return view === "col" ? (
+    <React.Fragment key={`${actionType}-col`}>{col}</React.Fragment>
+  ) : (
+    <React.Fragment key={`${actionType}-row`}>{row}</React.Fragment>
+  );
 }

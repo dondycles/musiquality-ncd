@@ -105,7 +105,7 @@ const SheetsDisplayerContent = React.forwardRef<
         <SheetsDisplayerOrientor
           actionType={actionType}
           row={chunkArray(sheets, 10).map((sheetChunk, index) => (
-            <CarouselItem key={`chunked-${index}`} className="basis-full">
+            <CarouselItem key={`row-${index}`} className="basis-full">
               <ListViewer length={sheetChunk.length}>
                 {sheetChunk.map((s) => (
                   <SheetBar sheet={s} key={s.sheets.id} />
@@ -115,7 +115,7 @@ const SheetsDisplayerContent = React.forwardRef<
           ))}
           col={sheets.map((sheet) => (
             <CarouselItem
-              key={sheet.sheets.id}
+              key={`col-${sheet.sheets.id}`}
               className="max-w-fit w-fit min-w-fit"
             >
               <SheetCard sheet={sheet} />
