@@ -19,6 +19,7 @@ export default function SearchBar({ baseUrl }: { baseUrl: string }) {
     if (searchParams.get("term")) return setIsSearching(false);
   }, [searchParams]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
     debounce((term: string) => {
       setIsSearching(true);

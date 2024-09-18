@@ -1,10 +1,10 @@
 import CurrencyText from "@/components/currency-text";
-import { Transaction } from "@/components/providers/user-data-provider";
 import { Badge } from "@/components/ui/badge";
+import { CurrentUserTransactions } from "@/utils/db/infer-types";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 export const transactionColumns: ColumnDef<
-  Transaction["transactions"] | undefined
+  CurrentUserTransactions | undefined
 >[] = [
   {
     accessorKey: "status",
