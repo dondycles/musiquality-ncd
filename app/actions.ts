@@ -3,6 +3,7 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import {
+  ArrangerFollowers,
   ArrangersPublicData,
   Library,
   Sales,
@@ -11,9 +12,9 @@ import {
   Transactions,
 } from "../utils/db/schema";
 import { db } from "../utils/db";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import Stripe from "stripe";
-import { CurrentUserWholeData } from "@/utils/db/infer-types";
+import { CurrentUserWholeData, InferResultType } from "@/utils/db/infer-types";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!);
 
@@ -220,6 +221,12 @@ export async function updateTransaction(
   return { success: res };
 }
 
+export async function getUserFollowings(userId: string) {
+  return await db.query.ArrangerFollowers.findMany({
+    where: eq(ArrangerFollowers.follower_id, userId),
+  });
+}
+
 export async function getUserTransactions(userId: string) {
   return await db.query.Transactions.findMany({
     with: {
@@ -274,15 +281,18 @@ export async function getUserWholeData(): Promise<CurrentUserWholeData> {
       error: "No user!",
       userTransactions: null,
       arrangerData: null,
+      userFollowings: null,
     };
 
   const res = await Promise.all([
     getUserTransactions(user.id),
     getArrangerData(user.id),
+    getUserFollowings(user.id),
   ]);
   return {
     userTransactions: res[0],
     arrangerData: res[1] ?? null,
+    userFollowings: res[2] ?? null,
     error: null,
   };
 }
@@ -304,4 +314,68 @@ export async function saveSale(
     .returning();
   if (!res[0]) return { error: "No sale data returned!" };
   return { success: "Sale created!" };
+}
+
+export async function followArranger(
+  arranger: InferResultType<
+    "ArrangersPublicData",
+    {
+      sheet: true;
+      followers: true;
+    }
+  >
+) {
+  const user = await currentUser();
+  if (!user) return { error: "No user!" };
+  const res = await db
+    .insert(ArrangerFollowers)
+    .values({
+      arranger_id: arranger.id,
+      follower_id: user.id,
+    })
+    .returning();
+  if (!res[0]) return { error: "No sale data returned!" };
+  revalidatePath("/arranger/" + arranger.slug);
+  return { success: "Sale created!" };
+}
+
+export async function unfollowArranger(
+  arranger: InferResultType<
+    "ArrangersPublicData",
+    {
+      sheet: true;
+      followers: true;
+    }
+  >
+) {
+  const user = await currentUser();
+  if (!user) return { error: "No user!" };
+  const res = await db
+    .delete(ArrangerFollowers)
+    .where(
+      and(
+        eq(ArrangerFollowers.arranger_id, arranger.id),
+        eq(ArrangerFollowers.follower_id, user.id)
+      )
+    )
+    .returning();
+  if (!res[0]) return { error: "No sale data returned!" };
+  revalidatePath("/arranger/" + arranger.slug);
+  return { success: "Sale created!" };
+}
+
+export async function getArrangerFollowers(
+  arranger: InferResultType<
+    "ArrangersPublicData",
+    {
+      sheet: true;
+      followers: true;
+    }
+  >
+) {
+  const res = await db.query.ArrangerFollowers.findMany({
+    where: eq(ArrangerFollowers.arranger_id, arranger.id),
+  });
+  if (!res[0]) return { error: "No  data returned!" };
+  return { success: res };
 }

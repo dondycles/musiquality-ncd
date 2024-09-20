@@ -169,6 +169,41 @@
       "when": 1726415651505,
       "tag": "0023_public_retro_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1726828406047,
+      "tag": "0024_silly_doctor_doom",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1726829357920,
+      "tag": "0025_workable_night_thrasher",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1726832955054,
+      "tag": "0026_aberrant_catseye",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1726833061603,
+      "tag": "0027_numerous_la_nuit",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1726833737275,
+      "tag": "0028_greedy_the_liberteens",
+      "breakpoints": true
     }
   ]
 }

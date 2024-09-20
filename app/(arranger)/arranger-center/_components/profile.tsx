@@ -12,7 +12,7 @@ export default function ArrangerCenterProfile({
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-center justify-start sm:items-start sm:justify-center">
       <ArrangerAvatar
-        className="w-fit rounded-full"
+        className="w-fit rounded-full pointer-events-none"
         arranger_data={arranger_data}
       />
       <div className="flex flex-col gap-2 flex-1">

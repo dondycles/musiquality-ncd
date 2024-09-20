@@ -43,7 +43,7 @@ export default function CartAddButton({
       ) : isPurchased ? (
         <Link
           href={`/library?term=${sheet.sheets.title}`}
-          className="text-muted-foreground text-xs hover:text-foreground hover:underline"
+          className="text-muted-foreground text-xs hover:text-foreground  hover:underline hover:brightness-50 duration-300"
         >
           Purchased
         </Link>

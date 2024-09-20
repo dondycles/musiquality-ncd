@@ -54,6 +54,8 @@ export type CurrentUserTransactions = InferResultType<
   }
 >;
 
+export type CurrentUserFollowings = InferResultType<"ArrangerFollowers">;
+
 export type CurrentArrangerData = InferResultType<
   "ArrangersPublicData",
   {
@@ -84,5 +86,6 @@ export type CurrentArrangerData = InferResultType<
 export type CurrentUserWholeData = {
   userTransactions: CurrentUserTransactions[] | null;
   arrangerData: CurrentArrangerData | null;
+  userFollowings: CurrentUserFollowings[] | null;
   error: string | null;
 };

@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import CartDrawer from "./cart/cart-drawer";
 import { useContext } from "react";
 import { UserDataContext } from "./providers/user-data-provider";
+import { Skeleton } from "./ui/skeleton";
 export default function Nav() {
   const { isLoading, resource } = useContext(UserDataContext);
 
@@ -19,17 +20,21 @@ export default function Nav() {
         >
           MusiQuality
         </Link>
-        <div className="flex gap-2 items-center">
-          <ThemeToggleBtn />
-          <CartDrawer />
-          {isLoading || !resource ? (
-            <SignInButton>
-              <Button>Sign in</Button>
-            </SignInButton>
-          ) : (
-            <UserBtn user={resource} />
-          )}
-        </div>
+        {isLoading ? (
+          <Skeleton className="h-8 w-24" />
+        ) : (
+          <div className="flex gap-2 items-center">
+            <ThemeToggleBtn />
+            <CartDrawer />
+            {!resource ? (
+              <SignInButton>
+                <Button>Sign in</Button>
+              </SignInButton>
+            ) : (
+              <UserBtn user={resource} />
+            )}
+          </div>
+        )}
       </nav>
     </header>
   );

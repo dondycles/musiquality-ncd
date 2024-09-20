@@ -15,14 +15,14 @@ export default function SheetBar({
 }) {
   return (
     <div
-      className={cn(
-        "col-span-1 row-span-1 flex items-center gap-2 cursor-pointer",
-        className
-      )}
+      className={cn("col-span-1 row-span-1 flex items-center gap-2", className)}
     >
       <ArrangerAvatar size={48} arranger_data={sheet.arrangers_pb_data} />
       <div className="grid">
-        <Link className="truncate text-sm" href={`/sheet/${sheet.sheets.id}`}>
+        <Link
+          className="truncate text-sm hover:underline hover:brightness-50 duration-300"
+          href={`/sheet/${sheet.sheets.id}`}
+        >
           {sheet.sheets.title}
         </Link>
         <p className="text-muted-foreground text-xs">

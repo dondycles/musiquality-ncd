@@ -24,7 +24,7 @@ export default function ArrangerAvatar({
         }
         src={arranger_data.avatar_url ?? "/favicon.ico"}
         alt={arranger_data.name}
-        className="rounded-full aspect-square object-contain shrink-0"
+        className="rounded-full aspect-square object-contain shrink-0 hover:brightness-50 duration-300"
         width={size}
         height={size}
         priority

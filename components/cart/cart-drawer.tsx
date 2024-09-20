@@ -38,8 +38,11 @@ export default function CartDrawer() {
     const isNotOwned = !library?.some(
       (trans) => trans.sheet?.id === item.sheets.id
     );
+    if (!isNotOwned) cart.removeToCart(item);
 
     const notTheArranger = arrangerData?.id !== item.arrangers_pb_data.id;
+
+    if (!notTheArranger) cart.removeToCart(item);
 
     // Only include items that have a valid ID and are not already owned
     return hasValidId && isNotOwned && notTheArranger;

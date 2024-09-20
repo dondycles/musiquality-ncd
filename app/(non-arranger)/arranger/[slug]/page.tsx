@@ -12,62 +12,70 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/utils/db";
 import { ArrangersPublicData, Sheets } from "@/utils/db/schema";
 import { eq } from "drizzle-orm";
-import { Music, Star, UserPlus } from "lucide-react";
+import { Music, Star } from "lucide-react";
+import FollowBtn from "./follow-btn";
+import { Badge } from "@/components/ui/badge";
+import RateBtn from "./rate-btn";
 
 export default async function ArrangerPage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const arranger = await db
-    .select()
-    .from(ArrangersPublicData)
-    .innerJoin(Sheets, eq(Sheets.arranger_id, ArrangersPublicData.id))
-    .where(eq(ArrangersPublicData.slug, params.slug));
+  const arranger = await db.query.ArrangersPublicData.findFirst({
+    with: {
+      sheet: true,
+      followers: true,
+    },
+    where: eq(ArrangersPublicData.slug, params.slug),
+  });
 
-  return (
-    <div className="flex flex-col gap-4 mt-[70px] flex-1 py-4 x-padding">
-      <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
-        <ArrangerAvatar
-          size={96}
-          arranger_data={arranger[0].arrangers_pb_data}
-        />
-        <div className="flex flex-col gap-2 w-fit sm:text-left text-center flex-1">
-          <BrandedText text={arranger[0].arrangers_pb_data.name} />
-          <p className="text-muted-foreground text-sm">
-            {arranger[0].arrangers_pb_data.bio}
-          </p>
+  if (arranger)
+    return (
+      <div className="flex flex-col gap-4 mt-[70px] flex-1 py-4 x-padding">
+        <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+          <ArrangerAvatar size={96} arranger_data={arranger} />
+          <div className="flex flex-col gap-2 w-fit items-center sm:items-start sm:text-left text-center flex-1">
+            <BrandedText text={arranger.name} />
+            <Badge variant={"secondary"} className="text-xs w-fit">
+              {arranger.followers.length ?? 0} Followers
+            </Badge>
+            <p className="text-muted-foreground text-sm">
+              {arranger.bio} Lorem ipsum dolor sit amet consectetur adipisicing
+              elit. Quibusdam repudiandae molestias praesentium. Lorem ipsum
+              dolor sit amet consectetur adipisicing elit. Vel at dolorum
+              explicabo.
+            </p>
+          </div>
+          <div className="flex sm:flex-col flex-row gap-4 justify-center">
+            <FollowBtn arranger={arranger} />
+            <RateBtn arranger={arranger} />
+          </div>
         </div>
-        <div className="flex sm:flex-col flex-row gap-4 justify-center">
-          <Button>
-            Follow <UserPlus size={16} className="ml-1" />
-          </Button>
-          <Button>
-            Rate <Star size={16} className="ml-1" />
-          </Button>
-        </div>
+        <SheetsDisplayer>
+          <SheetsDisplayerHeader>
+            <SheetsDisplayerIcon>
+              <Music size={24} />
+            </SheetsDisplayerIcon>
+            <SheetsDisplayerTitle>
+              Arrangements{" "}
+              <span className="text-muted-foreground text-xs font-normal">
+                ({arranger.sheet.length})
+              </span>
+            </SheetsDisplayerTitle>
+            <SheetsDisplayerViewToggleBtn actionType="top-selling" />
+          </SheetsDisplayerHeader>
+          <SheetsDisplayerContent
+            actionType="top-selling"
+            sheets={
+              arranger.sheet.map((s) => ({
+                sheets_file_url: null,
+                arrangers_pb_data: arranger,
+                sheets: s,
+              }))!
+            }
+          />
+        </SheetsDisplayer>
       </div>
-      <SheetsDisplayer>
-        <SheetsDisplayerHeader>
-          <SheetsDisplayerIcon>
-            <Music size={24} />
-          </SheetsDisplayerIcon>
-          <SheetsDisplayerTitle>
-            Arrangements{" "}
-            <span className="text-muted-foreground text-xs font-normal">
-              ({arranger.length})
-            </span>
-          </SheetsDisplayerTitle>
-          <SheetsDisplayerViewToggleBtn actionType="top-selling" />
-        </SheetsDisplayerHeader>
-        <SheetsDisplayerContent
-          actionType="top-selling"
-          sheets={arranger.map((s) => ({
-            ...s,
-            sheets_file_url: null,
-          }))}
-        />
-      </SheetsDisplayer>
-    </div>
-  );
+    );
 }

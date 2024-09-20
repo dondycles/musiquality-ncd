@@ -50,7 +50,7 @@ export default async function SheetPage({
                     arranger_data={sheet[0].arrangers_pb_data}
                   />
                   <Link
-                    className="truncate"
+                    className="truncate  hover:underline hover:brightness-50 duration-300"
                     href={`/arranger/${sheet[0].arrangers_pb_data.slug}`}
                   >
                     {sheet[0].arrangers_pb_data.name}

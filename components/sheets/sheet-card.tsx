@@ -26,13 +26,15 @@ export default function SheetCard({
       />
       <div className="p-4 text-left mb-0 mt-auto bg-muted/25">
         <Link href={`/sheet/${sheet.sheets.id}`}>
-          <p className="font-semibold text-xl truncate">{sheet.sheets.title}</p>
+          <p className="font-semibold text-xl truncate  hover:underline hover:brightness-50 duration-300">
+            {sheet.sheets.title}
+          </p>
         </Link>
         <div className="text-xs space-y-2">
           <div className="flex items-center gap-1">
             <ArrangerAvatar size={24} arranger_data={sheet.arrangers_pb_data} />
             <Link
-              className="truncate"
+              className="truncate  hover:underline hover:brightness-50 duration-300"
               href={`/arranger/${sheet.arrangers_pb_data.slug}`}
             >
               {sheet.arrangers_pb_data.name}

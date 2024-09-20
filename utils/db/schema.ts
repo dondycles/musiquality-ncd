@@ -116,6 +116,26 @@ export const Sales = pgTable("sales", {
   }),
 });
 
+export const ArrangerFollowers = pgTable("arranger_followers", {
+  id: serial("id").primaryKey(),
+  arranger_id: text("arranger_id")
+    .notNull()
+    .references(() => ArrangersPublicData.id, {
+      onDelete: "cascade",
+    }),
+  follower_id: text("follower_id").notNull(),
+});
+
+export const ArrangerRatings = pgTable("arranger_ratings", {
+  id: serial("id").primaryKey(),
+  arranger_id: text("arranger_id")
+    .notNull()
+    .references(() => ArrangersPublicData.id, {
+      onDelete: "no action",
+    }),
+  rater_id: text("rater_id").notNull(),
+});
+
 // Relations
 export const sheetsRelations = relations(Sheets, ({ one, many }) => ({
   arranger: one(ArrangersPublicData, {
@@ -137,6 +157,12 @@ export const arrangersPublicDataRelations = relations(
   ({ many }) => ({
     sheet: many(Sheets, { relationName: "sheet_arranger" }),
     sale: many(Sales, { relationName: "arranger_sale" }),
+    followers: many(ArrangerFollowers, {
+      relationName: "arranger_followers",
+    }),
+    rates: many(ArrangerRatings, {
+      relationName: "arranger_rates",
+    }),
   })
 );
 
@@ -175,5 +201,21 @@ export const salesRelations = relations(Sales, ({ one }) => ({
     fields: [Sales.arranger_id],
     references: [ArrangersPublicData.id],
     relationName: "arranger_sale",
+  }),
+}));
+
+export const followersRelations = relations(ArrangerFollowers, ({ one }) => ({
+  followers: one(ArrangersPublicData, {
+    fields: [ArrangerFollowers.arranger_id],
+    references: [ArrangersPublicData.id],
+    relationName: "arranger_followers",
+  }),
+}));
+
+export const ratesRalations = relations(ArrangerRatings, ({ one }) => ({
+  rates: one(ArrangersPublicData, {
+    fields: [ArrangerRatings.arranger_id],
+    references: [ArrangersPublicData.id],
+    relationName: "arranger_rates",
   }),
 }));

@@ -6,6 +6,7 @@ import { getUserWholeData } from "@/app/actions";
 import { UserResource } from "@clerk/types";
 import {
   CurrentArrangerData,
+  CurrentUserFollowings,
   CurrentUserTransactions,
 } from "@/utils/db/infer-types";
 
@@ -14,6 +15,7 @@ export type InitialState = {
   isLoading: boolean;
   resource: UserResource | null;
   arrangerData: CurrentArrangerData | null;
+  userFollowings: CurrentUserFollowings[] | null;
 };
 
 const initialState: InitialState = {
@@ -21,13 +23,14 @@ const initialState: InitialState = {
   isLoading: true,
   resource: null,
   arrangerData: null,
+  userFollowings: null,
 };
 export const UserDataContext = createContext<InitialState>(initialState);
 
 export function UserDataProvider({ children }: { children: React.ReactNode }) {
   const { user, isLoaded, isSignedIn } = useUser();
 
-  const { data, isFetching } = useQuery({
+  const { data, isLoading } = useQuery({
     enabled: (user !== undefined || user !== null) && isLoaded && isSignedIn,
     queryKey: ["user-data", user?.id],
     queryFn: async () => await getUserWholeData(),
@@ -39,10 +42,11 @@ export function UserDataProvider({ children }: { children: React.ReactNode }) {
   return (
     <UserDataContext.Provider
       value={{
-        isLoading: isFetching || !isLoaded,
+        isLoading: isLoading || !isLoaded,
         userTransactions: data?.userTransactions ?? null,
         resource: user === undefined || user === null ? null : user,
         arrangerData: data?.arrangerData ?? null,
+        userFollowings: data?.userFollowings ?? null,
       }}
     >
       {children}
