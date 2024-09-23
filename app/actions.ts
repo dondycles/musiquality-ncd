@@ -274,9 +274,8 @@ export async function getArrangerData(userId: string) {
   });
 }
 
-export async function getUserWholeData(): Promise<CurrentUserWholeData> {
-  const user = await currentUser();
-  if (!user)
+export async function getUserWholeData(userId: string | null) {
+  if (!userId)
     return {
       error: "No user!",
       userTransactions: null,
@@ -285,9 +284,9 @@ export async function getUserWholeData(): Promise<CurrentUserWholeData> {
     };
 
   const res = await Promise.all([
-    getUserTransactions(user.id),
-    getArrangerData(user.id),
-    getUserFollowings(user.id),
+    getUserTransactions(userId),
+    getArrangerData(userId),
+    getUserFollowings(userId),
   ]);
   return {
     userTransactions: res[0],
@@ -327,6 +326,16 @@ export async function followArranger(
 ) {
   const user = await currentUser();
   if (!user) return { error: "No user!" };
+
+  const isFollowed = await db.query.ArrangerFollowers.findFirst({
+    where: and(
+      eq(ArrangerFollowers.arranger_id, arranger.id),
+      eq(ArrangerFollowers.follower_id, user.id)
+    ),
+  });
+
+  if (isFollowed) return await unfollowArranger(arranger);
+
   const res = await db
     .insert(ArrangerFollowers)
     .values({

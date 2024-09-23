@@ -30,10 +30,10 @@ export const UserDataContext = createContext<InitialState>(initialState);
 export function UserDataProvider({ children }: { children: React.ReactNode }) {
   const { user, isLoaded, isSignedIn } = useUser();
 
-  const { data, isLoading } = useQuery({
+  const { data, isFetching } = useQuery({
     enabled: (user !== undefined || user !== null) && isLoaded && isSignedIn,
     queryKey: ["user-data", user?.id],
-    queryFn: async () => await getUserWholeData(),
+    queryFn: async () => await getUserWholeData(user?.id ?? null),
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
@@ -42,7 +42,7 @@ export function UserDataProvider({ children }: { children: React.ReactNode }) {
   return (
     <UserDataContext.Provider
       value={{
-        isLoading: isLoading || !isLoaded,
+        isLoading: isFetching || !isLoaded,
         userTransactions: data?.userTransactions ?? null,
         resource: user === undefined || user === null ? null : user,
         arrangerData: data?.arrangerData ?? null,

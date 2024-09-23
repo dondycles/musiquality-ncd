@@ -1,16 +1,14 @@
 "use client";
 
 import { followArranger, unfollowArranger } from "@/app/actions";
-import { UserDataContext } from "@/components/providers/user-data-provider";
 import { Button } from "@/components/ui/button";
-import { useQueryClient } from "@tanstack/react-query";
 import { UserMinus, UserPlus } from "lucide-react";
-import { useCallback, useContext, useState } from "react";
-import { debounce } from "lodash-es";
+import { useEffect, useState } from "react";
 import { InferResultType } from "@/utils/db/infer-types";
 
 export default function FollowBtn({
   arranger,
+  isFollowed,
 }: {
   arranger: InferResultType<
     "ArrangersPublicData",
@@ -19,32 +17,24 @@ export default function FollowBtn({
       followers: true;
     }
   >;
+  isFollowed: boolean;
 }) {
-  const { userFollowings, resource, isLoading } = useContext(UserDataContext);
-  const queryClient = useQueryClient();
-  const isFollowed = Boolean(
-    userFollowings?.find((a) => a.arranger_id === arranger.id)
-  );
+  const [loading, setLoading] = useState(false);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleFollow = useCallback(
-    debounce(async () => {
-      if (!resource) return;
-      isFollowed
-        ? await unfollowArranger(arranger)
-        : await followArranger(arranger);
-      queryClient.invalidateQueries({
-        queryKey: ["user-data", resource?.id],
-      });
-    }, 500),
-    [isFollowed, resource, userFollowings]
-  );
+  useEffect(() => {
+    if (!loading) return;
+    const handleFollow = async () => {
+      await followArranger(arranger);
+    };
+    handleFollow();
+    setTimeout(() => setLoading(false), 2000);
+  }, [arranger, isFollowed, loading]);
 
   return (
     <Button
-      disabled={isLoading}
+      disabled={loading}
       variant={isFollowed ? "ghost" : "default"}
-      onClick={handleFollow}
+      onClick={() => setLoading(true)}
     >
       {isFollowed ? "Unfollow" : "Follow"}
       {isFollowed ? (

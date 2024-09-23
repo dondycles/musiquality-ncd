@@ -8,14 +8,11 @@ import {
   SheetsDisplayerTitle,
   SheetsDisplayerViewToggleBtn,
 } from "@/components/sheets/sheets-displayer";
-import { Button } from "@/components/ui/button";
 import { db } from "@/utils/db";
-import { ArrangersPublicData, Sheets } from "@/utils/db/schema";
+import { ArrangersPublicData } from "@/utils/db/schema";
 import { eq } from "drizzle-orm";
-import { Music, Star } from "lucide-react";
-import FollowBtn from "./follow-btn";
+import { Music } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import RateBtn from "./rate-btn";
 
 export default async function ArrangerPage({
   params,
@@ -30,6 +27,12 @@ export default async function ArrangerPage({
     where: eq(ArrangersPublicData.slug, params.slug),
   });
 
+  if (!arranger)
+    return (
+      <div className="flex flex-col gap-4 mt-[70px] flex-1 py-4 x-padding">
+        <p className="text-muted-foreground m-auto">Arranger not found.</p>
+      </div>
+    );
   if (arranger)
     return (
       <div className="flex flex-col gap-4 mt-[70px] flex-1 py-4 x-padding">
@@ -37,20 +40,15 @@ export default async function ArrangerPage({
           <ArrangerAvatar size={96} arranger_data={arranger} />
           <div className="flex flex-col gap-2 w-fit items-center sm:items-start sm:text-left text-center flex-1">
             <BrandedText text={arranger.name} />
-            <Badge variant={"secondary"} className="text-xs w-fit">
+            {/* <Badge variant={"secondary"} className="text-xs w-fit">
               {arranger.followers.length ?? 0} Followers
-            </Badge>
-            <p className="text-muted-foreground text-sm">
-              {arranger.bio} Lorem ipsum dolor sit amet consectetur adipisicing
-              elit. Quibusdam repudiandae molestias praesentium. Lorem ipsum
-              dolor sit amet consectetur adipisicing elit. Vel at dolorum
-              explicabo.
-            </p>
+            </Badge> */}
+            <p className="text-muted-foreground text-sm">{arranger.bio}</p>
           </div>
-          <div className="flex sm:flex-col flex-row gap-4 justify-center">
-            <FollowBtn arranger={arranger} />
+          {/* <div className="flex sm:flex-col flex-row gap-4 justify-center">
+            <FollowBtn isFollowed={isFollowed} arranger={arranger} />
             <RateBtn arranger={arranger} />
-          </div>
+          </div> */}
         </div>
         <SheetsDisplayer>
           <SheetsDisplayerHeader>
